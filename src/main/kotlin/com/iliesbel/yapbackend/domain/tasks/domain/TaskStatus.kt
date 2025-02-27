@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.tasks.domain
+package com.iliesbel.yapbackend.domain.tasks.domain
 
 enum class TaskStatus {
     TODO,

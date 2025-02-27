@@ -1,10 +1,12 @@
 package com.iliesbel.yapbackend.tasks.presentation
 
-import com.iliesbel.yapbackend.tasks.domain.TaskStatus
-import com.iliesbel.yapbackend.tasks.persistence.ContextEntity
-import com.iliesbel.yapbackend.tasks.persistence.ProjectEntity
-import com.iliesbel.yapbackend.tasks.persistence.TaskEntity
-import com.iliesbel.yapbackend.tasks.persistence.TaskJpaRepository
+import com.iliesbel.yapbackend.domain.tasks.domain.TaskStatus
+import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
+import com.iliesbel.yapbackend.domain.tasks.persistence.ContextEntity
+import com.iliesbel.yapbackend.domain.tasks.persistence.ProjectEntity
+import com.iliesbel.yapbackend.domain.tasks.persistence.TaskEntity
+import com.iliesbel.yapbackend.domain.tasks.persistence.TaskJpaRepository
+import com.iliesbel.yapbackend.domain.tasks.presentation.ContextJpaRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -62,9 +64,11 @@ class TaskRepositoryIntegrationTest {
  @BeforeEach
  fun setup() {
   // Create test context
-  context = contextRepository.save(ContextEntity(
+  context = contextRepository.save(
+      ContextEntity(
    name = "Test Context"
-  ))
+  )
+  )
 
   // Create test project
   project = projectRepository.save(

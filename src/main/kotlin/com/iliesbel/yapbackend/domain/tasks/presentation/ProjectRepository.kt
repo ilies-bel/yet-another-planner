@@ -1,6 +1,6 @@
-package com.iliesbel.yapbackend.tasks.presentation
+package com.iliesbel.yapbackend.domain.tasks.presentation
 
-import com.iliesbel.yapbackend.tasks.persistence.ProjectEntity
+import com.iliesbel.yapbackend.domain.tasks.persistence.ProjectEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
 class ProjectRepository {

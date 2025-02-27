@@ -7,5 +7,5 @@ data class SubscriptionRequest (
 
 data class SubscriptionRequestKeys (
     val p256dh: String,
-    val auth: String
+    val auth: String,
 )

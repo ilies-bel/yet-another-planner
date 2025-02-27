@@ -1,6 +1,6 @@
-package com.iliesbel.yapbackend.tasks.domain
+package com.iliesbel.yapbackend.domain.tasks.domain
 
-import com.iliesbel.yapbackend.tasks.persistence.TaskRepository
+import com.iliesbel.yapbackend.domain.tasks.persistence.TaskRepository
 import org.springframework.stereotype.Service
 
 @Service

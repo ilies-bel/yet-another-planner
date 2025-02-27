@@ -1,6 +1,6 @@
-package com.iliesbel.yapbackend.tasks.persistence
+package com.iliesbel.yapbackend.domain.tasks.persistence
 
-import com.iliesbel.yapbackend.tasks.domain.TaskStatus
+import com.iliesbel.yapbackend.domain.tasks.domain.TaskStatus
 import jakarta.persistence.*
 import java.time.LocalDateTime
 

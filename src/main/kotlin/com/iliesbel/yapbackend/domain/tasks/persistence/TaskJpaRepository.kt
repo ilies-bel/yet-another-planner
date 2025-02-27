@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.tasks.persistence
+package com.iliesbel.yapbackend.domain.tasks.persistence
 
 import org.springframework.data.jpa.repository.JpaRepository
 

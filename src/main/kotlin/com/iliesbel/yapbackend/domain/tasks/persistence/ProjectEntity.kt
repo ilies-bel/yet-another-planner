@@ -1,12 +1,12 @@
-package com.iliesbel.yapbackend.tasks.persistence
+package com.iliesbel.yapbackend.domain.tasks.persistence
 
 import jakarta.persistence.*
 
 @Entity
-@Table(name = "context")
-class ContextEntity (
+@Table(name = "project")
+class ProjectEntity (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-    var name: String,
+    val name: String
 )

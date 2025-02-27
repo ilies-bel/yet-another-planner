@@ -1,7 +1,7 @@
-package com.iliesbel.yapbackend.tasks.presentation
+package com.iliesbel.yapbackend.domain.tasks.presentation
 
-import com.iliesbel.yapbackend.tasks.domain.Task
-import com.iliesbel.yapbackend.tasks.domain.TaskService
+import com.iliesbel.yapbackend.domain.tasks.domain.Task
+import com.iliesbel.yapbackend.domain.tasks.domain.TaskService
 import org.springframework.web.bind.annotation.*
 
 @RestController

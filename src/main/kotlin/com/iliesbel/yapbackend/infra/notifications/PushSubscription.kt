@@ -10,5 +10,6 @@ class PushSubscription (
      val id: Long? = null,
      val endpoint: String,
      val p256dh: String,
-     val auth: String
+     val auth: String,
+    val userEmail: String,
 )

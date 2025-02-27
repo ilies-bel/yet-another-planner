@@ -1,8 +1,8 @@
-package com.iliesbel.yapbackend.tasks.persistence
+package com.iliesbel.yapbackend.domain.tasks.persistence
 
-import com.iliesbel.yapbackend.tasks.domain.Difficulty
-import com.iliesbel.yapbackend.tasks.domain.Task
-import com.iliesbel.yapbackend.tasks.domain.TaskContext
+import com.iliesbel.yapbackend.domain.tasks.domain.Difficulty
+import com.iliesbel.yapbackend.domain.tasks.domain.Task
+import com.iliesbel.yapbackend.domain.tasks.domain.TaskContext
 import org.springframework.stereotype.Repository
 
 
