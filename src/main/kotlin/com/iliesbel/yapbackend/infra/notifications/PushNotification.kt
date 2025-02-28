@@ -1,8 +1,9 @@
 package com.iliesbel.yapbackend.infra.notifications
 
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
+import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
-import nl.martijndwars.webpush.PushService
+import nl.martijndwars.webpush.PushAsyncService
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.springframework.stereotype.Service
 import java.security.Security
@@ -21,7 +22,7 @@ class PushNotificationService(
         }
     }
 
-    private val pushService = PushService(
+    private val pushService = PushAsyncService(
         notificationProperties.publicKey,
         notificationProperties.privateKey,
     )
@@ -42,17 +43,17 @@ class PushNotificationService(
     fun sendNotification(message: String) {
         val subscriptions = subscriptionRepository.findAll()
 
-        for (subscription in subscriptions) {
 
-            val notification = Notification(
-                subscription.endpoint,
-                subscription.p256dh,
-                subscription.auth,
-                message.toByteArray()
-            )
-
-            // Send notification
-            pushService.send(notification)
+        subscriptions.forEach { subscription ->
+            kotlinx.coroutines.GlobalScope.launch {
+                val notification = Notification(
+                    subscription.endpoint,
+                    subscription.p256dh,
+                    subscription.auth,
+                    message.toByteArray()
+                )
+                pushService.send(notification)
+            }
         }
     }
 }
