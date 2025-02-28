@@ -1,6 +1,9 @@
 package com.iliesbel.yapbackend.infra.notifications
 
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
+import com.iliesbel.yapbackend.infra.notifications.persistence.PushSubscription
+import com.iliesbel.yapbackend.infra.notifications.persistence.PushSubscriptionRepository
+import com.iliesbel.yapbackend.infra.notifications.presentation.SubscriptionRequest
 import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
 import nl.martijndwars.webpush.PushAsyncService

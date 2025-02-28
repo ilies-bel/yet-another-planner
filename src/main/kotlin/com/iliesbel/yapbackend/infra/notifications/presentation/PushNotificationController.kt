@@ -1,5 +1,6 @@
-package com.iliesbel.yapbackend.infra.notifications
+package com.iliesbel.yapbackend.infra.notifications.presentation
 
+import com.iliesbel.yapbackend.infra.notifications.PushNotificationService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

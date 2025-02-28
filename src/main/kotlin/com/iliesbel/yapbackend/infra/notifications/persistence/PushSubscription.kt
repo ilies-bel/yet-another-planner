@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.infra.notifications
+package com.iliesbel.yapbackend.infra.notifications.persistence
 
 import jakarta.persistence.*
 

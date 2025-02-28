@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.infra.notifications
+package com.iliesbel.yapbackend.infra.notifications.presentation
 
 data class SubscriptionRequest (
     val endpoint: String,
