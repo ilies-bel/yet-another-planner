@@ -3,7 +3,6 @@ package com.iliesbel.yapbackend.infra.authentication
 import com.iliesbel.yapbackend.infra.authentication.user.Role
 import com.iliesbel.yapbackend.infra.authentication.user.UserEntity
 import com.iliesbel.yapbackend.infra.authentication.user.UserRepository
-import com.kumaverse.kumabackend.authentication.LoginUserDto
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder

@@ -1,4 +1,4 @@
-package com.kumaverse.kumabackend.authentication.configuration
+package com.iliesbel.yapbackend.infra.authentication.configuration
 
 import com.iliesbel.yapbackend.infra.authentication.JwtService
 import jakarta.servlet.FilterChain

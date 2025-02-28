@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/push")
+@RequestMapping("/api/public/push")
 class PushNotificationController(private val pushNotificationService: PushNotificationService) {
     @PostMapping("/subscribe")
     fun subscribe(@RequestBody request: SubscriptionRequest): ResponseEntity<Void> {

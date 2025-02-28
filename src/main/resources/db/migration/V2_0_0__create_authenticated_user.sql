@@ -1,7 +1,7 @@
-CREATE TABLE "user"
+CREATE TABLE "people"
 (
     "id"            bigint PRIMARY KEY,
-    "username"      varchar,
+    "name"          varchar,
     "password_hash" varchar,
     "email"         varchar,
     "role"          varchar,

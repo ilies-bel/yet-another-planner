@@ -1,8 +1,5 @@
-package com.kumaverse.kumabackend.authentication
+package com.iliesbel.yapbackend.infra.authentication
 
-import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
-import com.iliesbel.yapbackend.infra.authentication.JwtService
-import com.iliesbel.yapbackend.infra.authentication.UserToCreate
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -10,7 +7,7 @@ import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 
-@RestController("/api")
+@RestController
 class AuthenticationController(
     private val authenticationService: AuthenticationService,
     private val jwtService: JwtService,
@@ -32,6 +29,6 @@ class AuthenticationController(
 }
 
 data class LoginResponse(
-    var token: String,
-    var expiresIn: Long,
+    val token: String,
+    val expiresIn: Long,
 )

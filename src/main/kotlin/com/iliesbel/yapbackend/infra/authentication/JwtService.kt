@@ -4,20 +4,10 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.context.annotation.Configuration
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
 import java.util.*
 import javax.crypto.SecretKey
-
-
-@Configuration
-@ConfigurationProperties(prefix = "security.jwt", ignoreUnknownFields = false)
-class SecurityConfigProperties(
-    var secretKey: String = "",
-    var expirationTime: Long = 0,
-)
 
 
 @Service

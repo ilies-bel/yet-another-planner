@@ -12,7 +12,6 @@ import java.security.Security
 @Service
 class PushNotificationService(
     private val subscriptionRepository: PushSubscriptionRepository,
-    private val authenticationService: AuthenticationService,
     notificationProperties: NotificationProperties,
 ) {
     init {

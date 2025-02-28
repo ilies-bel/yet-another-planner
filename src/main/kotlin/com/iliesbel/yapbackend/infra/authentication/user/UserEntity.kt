@@ -8,11 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails
 @Table(name = "people")
 class UserEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     var id: Long = -1,
 
     var name: String,
-
 
     @Column(name = "password_hash")
     var hashedPassword: String,
