@@ -1,7 +1,7 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
-import com.iliesbel.yapbackend.domain.tasks.domain.Task
 import com.iliesbel.yapbackend.domain.tasks.domain.TaskService
+import com.iliesbel.yapbackend.domain.tasks.domain.model.Task
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -11,7 +11,6 @@ class TaskController(private val taskService: TaskService) {
     fun getTasksForCurrentUser(): List<Task> {
         return taskService.findAll()
     }
-
 
 
 

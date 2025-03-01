@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.tasks.presentation
 
-import com.iliesbel.yapbackend.domain.tasks.domain.TaskStatus
+import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskStatus
 import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.persistence.ContextEntity
 import com.iliesbel.yapbackend.domain.tasks.persistence.ProjectEntity

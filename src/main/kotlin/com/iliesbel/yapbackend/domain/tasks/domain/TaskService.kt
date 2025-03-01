@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.domain
 
+import com.iliesbel.yapbackend.domain.tasks.domain.model.Task
 import com.iliesbel.yapbackend.domain.tasks.persistence.TaskRepository
 import org.springframework.stereotype.Service
 
