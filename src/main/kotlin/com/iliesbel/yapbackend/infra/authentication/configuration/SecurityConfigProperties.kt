@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.infra.authentication
+package com.iliesbel.yapbackend.infra.authentication.configuration
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

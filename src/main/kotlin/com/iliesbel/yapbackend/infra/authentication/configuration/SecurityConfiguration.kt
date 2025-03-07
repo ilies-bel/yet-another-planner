@@ -2,7 +2,6 @@ package com.iliesbel.yapbackend.infra.authentication.configuration
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpMethod
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -34,7 +33,7 @@ class SecurityConfiguration(
                 authorize("/api/public/**", permitAll)
                 authorize("/actuator/**", permitAll)
 
-                authorize(HttpMethod.POST, "/error", permitAll)
+                authorize("/error", permitAll)
                 authorize(anyRequest, authenticated)
             }
             sessionManagement { sessionCreationPolicy = SessionCreationPolicy.STATELESS }

@@ -4,6 +4,7 @@ import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import com.iliesbel.yapbackend.infra.notifications.persistence.PushSubscription
 import com.iliesbel.yapbackend.infra.notifications.persistence.PushSubscriptionRepository
 import com.iliesbel.yapbackend.infra.notifications.presentation.SubscriptionRequest
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.launch
 import nl.martijndwars.webpush.Notification
 import nl.martijndwars.webpush.PushAsyncService
@@ -35,7 +36,7 @@ class PushNotificationService(
         val currentUser = AuthenticationService.getUserFromContext()
 
         val subscription = PushSubscription(
-            userEmail = currentUser.username,
+            userEmail = currentUser.email,
             endpoint = request.endpoint,
             p256dh = request.keys.p256dh,
             auth = request.keys.auth
@@ -43,6 +44,7 @@ class PushNotificationService(
         subscriptionRepository.save(subscription)
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun sendNotification(message: String) {
         val subscriptions = subscriptionRepository.findAll()
 

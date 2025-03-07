@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.infra.authentication.user
+package com.iliesbel.yapbackend.infra.authentication.persistence
 
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
@@ -10,7 +10,9 @@ class UserEntity(
     @Id
     var id: Long = -1,
 
-    var name: String,
+    var name: String?,
+
+    val email: String,
 
     @Column(name = "password_hash")
     var hashedPassword: String,
@@ -18,15 +20,13 @@ class UserEntity(
     @Enumerated(EnumType.STRING)
     var role: Role,
 
-    ) : UserDetails
-{
+    ) : UserDetails {
 
-    override fun getUsername(): String {
-        return this.name
+    override fun getUsername(): String? {
+        return this.email
     }
 
     override fun getAuthorities(): Collection<GrantedAuthority> {
-
         return listOf(GrantedAuthority { role.name })
     }
 
@@ -54,5 +54,5 @@ class UserEntity(
 
 
 enum class Role {
-USER, ADMIN
+    USER, ADMIN
 }

@@ -1,8 +1,10 @@
 package com.iliesbel.yapbackend.infra.authentication
 
-import com.iliesbel.yapbackend.infra.authentication.user.Role
-import com.iliesbel.yapbackend.infra.authentication.user.UserEntity
-import com.iliesbel.yapbackend.infra.authentication.user.UserRepository
+import com.iliesbel.yapbackend.infra.authentication.persistence.Role
+import com.iliesbel.yapbackend.infra.authentication.persistence.UserEntity
+import com.iliesbel.yapbackend.infra.authentication.persistence.UserRepository
+import com.iliesbel.yapbackend.infra.authentication.presentation.LoginUserDto
+import com.iliesbel.yapbackend.infra.authentication.presentation.UserToCreate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -21,9 +23,10 @@ class AuthenticationService(
     fun signup(input: UserToCreate): Long {
         return userRepository.save(
             UserEntity(
-                name = input.username,
+                email = input.email,
                 role = Role.USER,
                 hashedPassword = passwordEncoder.encode(input.password),
+                name = null,
             )
         ).id
     }
@@ -31,12 +34,12 @@ class AuthenticationService(
     fun authenticate(input: LoginUserDto): UserEntity {
         authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                input.username,
+                input.email,
                 input.password,
             )
         )
 
-        return userRepository.findByName(input.username)
+        return userRepository.findByEmail(input.email)
             ?: throw IllegalArgumentException("User not found")
     }
 
@@ -51,16 +54,4 @@ class AuthenticationService(
         }
     }
 }
-
-data class AuthenticatedUser(
-    val id: Long,
-    val username: String,
-    val role: Role,
-)
-
-
-data class UserToCreate(
-    val username: String,
-    val password: String,
-)
 

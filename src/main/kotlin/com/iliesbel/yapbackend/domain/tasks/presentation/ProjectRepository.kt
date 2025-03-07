@@ -9,6 +9,6 @@ class ProjectRepository {
 
 
 interface ProjectJpaRepository : JpaRepository<ProjectEntity, Long> {
-
+    fun findByName(it: String) : ProjectEntity?
 }
 

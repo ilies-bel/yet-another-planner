@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.infra.authentication.configuration
 
-import com.iliesbel.yapbackend.infra.authentication.user.UserRepository
+import com.iliesbel.yapbackend.infra.authentication.persistence.UserRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -16,8 +16,8 @@ class AuthenticationConfiguration(private val userDao: UserRepository) {
 
     @Bean
     fun userDetailsService(): UserDetailsService {
-        return UserDetailsService { username: String ->
-            userDao.findByName(username) ?: throw UsernameNotFoundException("User not found")
+        return UserDetailsService { email: String ->
+            userDao.findByEmail(email) ?: throw UsernameNotFoundException("User not found")
         }
     }
 

@@ -11,14 +11,12 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.web.servlet.HandlerExceptionResolver
 
 
 @Component
 class JwtAuthenticationFilter(
     private val jwtService: JwtService,
     private val userDetailsService: UserDetailsService,
-    private val handlerExceptionResolver: HandlerExceptionResolver,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -32,35 +30,31 @@ class JwtAuthenticationFilter(
             return
         }
 
-        try {
-            val jwt = authHeader.extractToken()
-            val username = jwtService.extractUsername(jwt)
+        val jwt = authHeader.extractToken()
+        val username = jwtService.extractUsername(jwt)
 
-            val authentication: Authentication? = SecurityContextHolder.getContext().authentication
+        val authentication: Authentication? = SecurityContextHolder.getContext().authentication
 
-            if (authentication != null) {
-                filterChain.doFilter(request, response)
-                return
-            }
-
-            val userDetails = userDetailsService.loadUserByUsername(username)
-
-            if (jwtService.isTokenValid(jwt, userDetails)) {
-                val authToken = UsernamePasswordAuthenticationToken(
-                    userDetails,
-                    null,
-                    userDetails.authorities
-                )
-
-                authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                SecurityContextHolder.getContext().authentication = authToken
-            }
-
-
+        if (authentication != null) {
             filterChain.doFilter(request, response)
-        } catch (exception: Exception) {
-            handlerExceptionResolver.resolveException(request, response, null, exception)
+            return
         }
+
+        val userDetails = userDetailsService.loadUserByUsername(username)
+
+        if (jwtService.isTokenValid(jwt, userDetails)) {
+            val authToken = UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.authorities
+            )
+
+            authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
+            SecurityContextHolder.getContext().authentication = authToken
+        }
+
+
+        filterChain.doFilter(request, response)
     }
 
     private fun String.extractToken(): String {

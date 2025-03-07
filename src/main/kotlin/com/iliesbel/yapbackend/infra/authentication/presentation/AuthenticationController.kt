@@ -1,5 +1,7 @@
-package com.iliesbel.yapbackend.infra.authentication
+package com.iliesbel.yapbackend.infra.authentication.presentation
 
+import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
+import com.iliesbel.yapbackend.infra.authentication.JwtService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -21,6 +23,15 @@ class AuthenticationController(
     @PostMapping("/auth/login")
     fun login(@RequestBody loginUserDto: LoginUserDto): LoginResponse {
         val user = authenticationService.authenticate(loginUserDto)
+
+        val jwtToken: String = jwtService.generateToken(user)
+
+        return LoginResponse(jwtToken, jwtService.getExpirationTime())
+    }
+
+    @PostMapping("/auth/refresh")
+    fun login(): LoginResponse {
+        val user = AuthenticationService.getUserFromContext()
 
         val jwtToken: String = jwtService.generateToken(user)
 
