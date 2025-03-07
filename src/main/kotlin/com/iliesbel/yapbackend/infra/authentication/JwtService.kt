@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.infra.authentication
 
+import com.iliesbel.yapbackend.infra.authentication.configuration.SecurityConfigProperties
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.io.Decoders

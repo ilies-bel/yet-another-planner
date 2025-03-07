@@ -7,12 +7,9 @@ data class Task(
     val name: String,
     val description: String?,
     val status: TaskStatus,
-    val difficulty: Difficulty?,
+    val difficulty: String?,
     val context: TaskContext?,
     val projectName: String?,
     val dueDate: LocalDateTime?,
-    )
-
-class TaskContext (
-    val name: String,
 )
+
