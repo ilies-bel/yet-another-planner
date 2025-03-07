@@ -16,8 +16,8 @@ CREATE TABLE task (
                       status VARCHAR(50) NOT NULL,
                       difficulty INTEGER,
                       due_date TIMESTAMP,
-                      context_id BIGINT NOT NULL,
-                      project_id BIGINT NOT NULL,
+                      context_id BIGINT,
+                      project_id BIGINT,
 
                       CONSTRAINT fk_task_context
                           FOREIGN KEY (context_id)
