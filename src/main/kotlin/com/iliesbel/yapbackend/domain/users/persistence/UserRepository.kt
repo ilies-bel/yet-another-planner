@@ -1,6 +1,5 @@
-package com.iliesbel.yapbackend.domain.contexts
+package com.iliesbel.yapbackend.domain.users.persistence
 
-import com.iliesbel.yapbackend.domain.users.UserEntity
 import org.springframework.stereotype.Repository
 
 @Repository

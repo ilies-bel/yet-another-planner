@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.domain.contexts.persistence
 
-import com.iliesbel.yapbackend.domain.contexts.Context
+import com.iliesbel.yapbackend.domain.contexts.domain.Context
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import org.springframework.stereotype.Repository
 

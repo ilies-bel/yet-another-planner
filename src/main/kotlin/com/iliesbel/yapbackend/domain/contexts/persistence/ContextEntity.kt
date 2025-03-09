@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.domain.contexts.persistence
 
-import com.iliesbel.yapbackend.domain.contexts.ContextType
+import com.iliesbel.yapbackend.domain.contexts.domain.ContextType
 import jakarta.persistence.*
 import java.util.*
 

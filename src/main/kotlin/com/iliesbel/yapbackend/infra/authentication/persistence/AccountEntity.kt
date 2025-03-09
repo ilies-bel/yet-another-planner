@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.infra.authentication.persistence
 
-import com.iliesbel.yapbackend.domain.users.UserEntity
+import com.iliesbel.yapbackend.domain.users.persistence.UserEntity
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails

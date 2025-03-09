@@ -1,6 +1,8 @@
 package com.iliesbel.yapbackend.domain.users
 
-import com.iliesbel.yapbackend.domain.contexts.UserRepository
+import com.iliesbel.yapbackend.domain.users.persistence.DeviceEntity
+import com.iliesbel.yapbackend.domain.users.persistence.UserEntity
+import com.iliesbel.yapbackend.domain.users.persistence.UserRepository
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import com.iliesbel.yapbackend.infra.userAgent.UserAgent
 import org.springframework.stereotype.Service

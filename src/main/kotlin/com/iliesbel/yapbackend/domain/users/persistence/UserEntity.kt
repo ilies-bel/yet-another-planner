@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.domain.users
+package com.iliesbel.yapbackend.domain.users.persistence
 
 import jakarta.persistence.*
 import org.hibernate.annotations.NaturalId

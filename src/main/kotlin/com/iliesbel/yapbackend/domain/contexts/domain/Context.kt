@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.domain.contexts
+package com.iliesbel.yapbackend.domain.contexts.domain
 
 import java.util.*
 

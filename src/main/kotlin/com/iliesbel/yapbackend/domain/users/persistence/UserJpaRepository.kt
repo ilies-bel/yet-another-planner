@@ -1,6 +1,5 @@
-package com.iliesbel.yapbackend.domain.contexts
+package com.iliesbel.yapbackend.domain.users.persistence
 
-import com.iliesbel.yapbackend.domain.users.UserEntity
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface UserJpaRepository : JpaRepository<UserEntity, Long> {

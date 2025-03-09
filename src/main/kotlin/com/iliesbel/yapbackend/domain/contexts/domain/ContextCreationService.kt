@@ -1,5 +1,6 @@
-package com.iliesbel.yapbackend.domain.contexts
+package com.iliesbel.yapbackend.domain.contexts.domain
 
+import com.iliesbel.yapbackend.domain.contexts.ContextCreation
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextEntity
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextRepository
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
