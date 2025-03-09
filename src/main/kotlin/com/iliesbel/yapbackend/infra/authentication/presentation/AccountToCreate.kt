@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.infra.authentication.presentation
 
-data class UserToCreate(
+data class AccountToCreate(
     val email: String,
     val password: String,
 )

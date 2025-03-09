@@ -1,6 +1,6 @@
 package com.iliesbel.yapbackend.infra.authentication.configuration
 
-import com.iliesbel.yapbackend.infra.authentication.persistence.UserRepository
+import com.iliesbel.yapbackend.infra.authentication.persistence.AccountRepository
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.authentication.AuthenticationManager
@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 
 @Configuration
-class AuthenticationConfiguration(private val userDao: UserRepository) {
+class AuthenticationConfiguration(private val userDao: AccountRepository) {
 
     @Bean
     fun userDetailsService(): UserDetailsService {

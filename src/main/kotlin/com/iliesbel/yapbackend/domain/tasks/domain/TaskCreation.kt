@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.domain.tasks.presentation
+package com.iliesbel.yapbackend.domain.tasks.domain
 
 import com.iliesbel.yapbackend.domain.tasks.domain.model.Difficulty
 import java.time.LocalDateTime

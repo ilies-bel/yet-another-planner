@@ -16,8 +16,8 @@ class AuthenticationController(
 ) {
     @PostMapping("/auth/register")
     @ResponseStatus(HttpStatus.CREATED)
-    fun register(@RequestBody userToCreate: UserToCreate): Long {
-        return authenticationService.signup(userToCreate)
+    fun register(@RequestBody accountToCreate: AccountToCreate): Long {
+        return authenticationService.signup(accountToCreate)
     }
 
     @PostMapping("/auth/login")

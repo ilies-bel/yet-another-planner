@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.persistence
 
+import com.iliesbel.yapbackend.domain.contexts.persistence.ContextEntity
 import com.iliesbel.yapbackend.domain.tasks.domain.model.Difficulty
 import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskStatus
 import jakarta.persistence.*

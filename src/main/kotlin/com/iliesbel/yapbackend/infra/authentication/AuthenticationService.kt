@@ -1,37 +1,38 @@
 package com.iliesbel.yapbackend.infra.authentication
 
+import com.iliesbel.yapbackend.infra.authentication.persistence.AccountEntity
+import com.iliesbel.yapbackend.infra.authentication.persistence.AccountRepository
 import com.iliesbel.yapbackend.infra.authentication.persistence.Role
-import com.iliesbel.yapbackend.infra.authentication.persistence.UserEntity
-import com.iliesbel.yapbackend.infra.authentication.persistence.UserRepository
+import com.iliesbel.yapbackend.infra.authentication.presentation.AccountToCreate
 import com.iliesbel.yapbackend.infra.authentication.presentation.LoginUserDto
-import com.iliesbel.yapbackend.infra.authentication.presentation.UserToCreate
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 
 @Service
 class AuthenticationService(
-    private val userRepository: UserRepository,
+    private val accountRepository: AccountRepository,
     private val authenticationManager: AuthenticationManager,
     private val passwordEncoder: PasswordEncoder,
 ) {
 
-    fun signup(input: UserToCreate): Long {
-        return userRepository.save(
-            UserEntity(
+    @Transactional
+    fun signup(input: AccountToCreate): Long {
+        return accountRepository.save(
+            AccountEntity(
                 email = input.email,
                 role = Role.USER,
                 hashedPassword = passwordEncoder.encode(input.password),
-                name = null,
             )
         ).id
     }
 
-    fun authenticate(input: LoginUserDto): UserEntity {
+    fun authenticate(input: LoginUserDto): AccountEntity {
         authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 input.email,
@@ -39,18 +40,18 @@ class AuthenticationService(
             )
         )
 
-        return userRepository.findByEmail(input.email)
+        return accountRepository.findByEmail(input.email)
             ?: throw IllegalArgumentException("User not found")
     }
 
     companion object {
-        fun getUserFromContext(): UserEntity {
-            val user = SecurityContextHolder.getContext().authentication.principal
-            if (user == "anonymousUser") {
+        fun getUserFromContext(): AccountEntity {
+            val account = SecurityContextHolder.getContext().authentication.principal
+            if (account == "anonymousUser") {
                 throw UsernameNotFoundException("User not found")
             }
 
-            return user as UserEntity
+            return account as AccountEntity
         }
     }
 }

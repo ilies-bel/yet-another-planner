@@ -10,10 +10,11 @@ import org.springframework.web.bind.annotation.*
 class TaskController(private val taskService: TaskService) {
     @GetMapping("/tasks")
     fun getTasksForCurrentUser(
-        filters : TaskFilter
+        filters: TaskFilter
     ): List<Task> {
         return taskService.findAll(filters)
     }
+
     @PostMapping("/tasks")
     fun addTask(@RequestBody task: TaskCreationDto) {
         val currentUser = AuthenticationService.getUserFromContext()
@@ -27,6 +28,6 @@ class TaskController(private val taskService: TaskService) {
     }
 }
 
-data class TaskFilter (
+data class TaskFilter(
     val status: List<TaskStatus>?,
 )

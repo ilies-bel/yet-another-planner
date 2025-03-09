@@ -1,4 +1,4 @@
-CREATE TABLE "people"
+CREATE TABLE account
 (
     "id"            bigint PRIMARY KEY,
     "name"          varchar,

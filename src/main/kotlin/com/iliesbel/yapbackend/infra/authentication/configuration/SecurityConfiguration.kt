@@ -59,7 +59,8 @@ class SecurityConfiguration(
                 "Accept",
                 "X-Requested-With",
                 "Access-Control-Request-Method",
-                "Access-Control-Request-Headers"
+                "Access-Control-Request-Headers",
+                "X-Device"
             )
 
             maxAge = 3600L

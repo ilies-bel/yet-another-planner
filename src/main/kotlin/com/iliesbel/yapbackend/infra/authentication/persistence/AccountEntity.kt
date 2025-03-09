@@ -1,16 +1,15 @@
 package com.iliesbel.yapbackend.infra.authentication.persistence
 
+import com.iliesbel.yapbackend.domain.users.UserEntity
 import jakarta.persistence.*
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 
 @Entity
-@Table(name = "people")
-class UserEntity(
+@Table(name = "account")
+class AccountEntity(
     @Id
     var id: Long = -1,
-
-    var name: String?,
 
     val email: String,
 
@@ -20,9 +19,12 @@ class UserEntity(
     @Enumerated(EnumType.STRING)
     var role: Role,
 
+    @OneToOne
+    val user: UserEntity? = null,
+
     ) : UserDetails {
 
-    override fun getUsername(): String? {
+    override fun getUsername(): String {
         return this.email
     }
 
@@ -30,7 +32,7 @@ class UserEntity(
         return listOf(GrantedAuthority { role.name })
     }
 
-    override fun getPassword(): String? {
+    override fun getPassword(): String {
         return hashedPassword
     }
 
@@ -40,7 +42,7 @@ class UserEntity(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other !is UserEntity) return false
+        if (other !is AccountEntity) return false
 
         if (id != other.id) return false
 

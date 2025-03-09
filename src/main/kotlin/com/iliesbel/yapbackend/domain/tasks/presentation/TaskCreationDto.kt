@@ -1,8 +1,9 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
+import com.iliesbel.yapbackend.domain.tasks.domain.TaskCreation
 import com.iliesbel.yapbackend.domain.tasks.domain.model.Difficulty
 import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskContext
-import com.iliesbel.yapbackend.infra.authentication.persistence.UserEntity
+import com.iliesbel.yapbackend.infra.authentication.persistence.AccountEntity
 import java.time.LocalDateTime
 
 data class TaskCreationDto(
@@ -13,7 +14,7 @@ data class TaskCreationDto(
     val projectName: String?,
     val dueDate: LocalDateTime?,
 ) {
-    fun toTaskCreation(currentUser: UserEntity): TaskCreation {
+    fun toTaskCreation(currentUser: AccountEntity): TaskCreation {
         return TaskCreation(
             name = name,
             description = description,

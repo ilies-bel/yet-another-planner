@@ -3,12 +3,12 @@ package com.iliesbel.yapbackend.domain.tasks.persistence
 import com.iliesbel.jooq.generated.tables.references.CONTEXT
 import com.iliesbel.jooq.generated.tables.references.PROJECT
 import com.iliesbel.jooq.generated.tables.references.TASK
+import com.iliesbel.yapbackend.domain.contexts.persistence.ContextJpaRepository
+import com.iliesbel.yapbackend.domain.tasks.domain.TaskCreation
 import com.iliesbel.yapbackend.domain.tasks.domain.model.Task
 import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskContext
 import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskStatus
-import com.iliesbel.yapbackend.domain.tasks.presentation.ContextJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
-import com.iliesbel.yapbackend.domain.tasks.presentation.TaskCreation
 import com.iliesbel.yapbackend.domain.tasks.presentation.TaskFilter
 import org.jooq.DSLContext
 import org.springframework.stereotype.Repository
