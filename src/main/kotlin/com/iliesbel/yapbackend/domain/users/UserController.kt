@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.users
 
+import com.iliesbel.yapbackend.domain.users.domain.UserService
 import com.iliesbel.yapbackend.infra.userAgent.UserAgent
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,7 +12,7 @@ class UserController(private val userService: UserService) {
 
     @PostMapping("/users")
     fun saveUser(@RequestBody user: UserToCreate): Long {
-        return userService.saveUser(user)
+        return userService.createOrUpdate(user)
     }
 
     @PostMapping("/users/current/devices")

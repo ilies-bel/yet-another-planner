@@ -8,4 +8,6 @@ class ChatEntity(
     @Id
     val id: Long,
     val message: String,
+    val personalityScore: Int,
+    val loveScore: Int,
 )

@@ -17,7 +17,7 @@ class TaskController(private val taskService: TaskService) {
 
     @PostMapping("/tasks")
     fun addTask(@RequestBody task: TaskCreationDto) {
-        val currentUser = AuthenticationService.getUserFromContext()
+        val currentUser = AuthenticationService.getAccountFromContext()
 
         return taskService.create(task.toTaskCreation(currentUser))
     }

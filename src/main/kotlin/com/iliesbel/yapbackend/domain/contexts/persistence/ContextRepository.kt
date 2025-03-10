@@ -9,7 +9,7 @@ class ContextRepository(
     private val contextJpaRepository: ContextJpaRepository
 ) {
     fun findByUser(): List<Context> {
-        val authentication = AuthenticationService.getUserFromContext()
+        val authentication = AuthenticationService.getAccountFromContext()
 
         return contextJpaRepository.findByUserEmail(authentication.email).map {
             Context(
