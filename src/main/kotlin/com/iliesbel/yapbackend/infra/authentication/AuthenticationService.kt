@@ -45,7 +45,7 @@ class AuthenticationService(
     }
 
     companion object {
-        fun getUserFromContext(): AccountEntity {
+        fun getAccountFromContext(): AccountEntity {
             val account = SecurityContextHolder.getContext().authentication.principal
             if (account == "anonymousUser") {
                 throw UsernameNotFoundException("User not found")

@@ -33,7 +33,7 @@ class PushNotificationService(
 
 
     fun subscribe(request: SubscriptionRequest) {
-        val currentUser = AuthenticationService.getUserFromContext()
+        val currentUser = AuthenticationService.getAccountFromContext()
 
         val subscription = PushSubscription(
             userEmail = currentUser.email,

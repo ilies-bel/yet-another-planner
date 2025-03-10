@@ -20,7 +20,7 @@ class ContextCreationService(
                     ContextEntity(
                         name = contextCreation.name,
                         type = ContextType.DEVICE,
-                        userEmail = AuthenticationService.getUserFromContext().email,
+                        userEmail = AuthenticationService.getAccountFromContext().email,
                         deviceIdentifier = userAgent.deviceId!!
                     )
                 ).id!!

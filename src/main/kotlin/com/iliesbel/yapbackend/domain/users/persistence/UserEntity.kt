@@ -10,10 +10,14 @@ class UserEntity(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,
 
-    var name: String?,
+    var name: String,
 
     @NaturalId
     val email: String,
+
+    val chatPersonalityScore: Int,
+
+    val chatLoveScore: Int,
 
     @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user")
     val devices: MutableList<DeviceEntity> = mutableListOf()

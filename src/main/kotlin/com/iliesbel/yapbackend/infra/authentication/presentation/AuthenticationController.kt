@@ -31,7 +31,7 @@ class AuthenticationController(
 
     @PostMapping("/auth/refresh")
     fun login(): LoginResponse {
-        val user = AuthenticationService.getUserFromContext()
+        val user = AuthenticationService.getAccountFromContext()
 
         val jwtToken: String = jwtService.generateToken(user)
 

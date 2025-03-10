@@ -1,7 +1,9 @@
-package com.iliesbel.yapbackend.domain.users
+package com.iliesbel.yapbackend.domain.users.domain
 
+import com.iliesbel.yapbackend.domain.chatbot.domain.LoveScore
+import com.iliesbel.yapbackend.domain.chatbot.domain.PersonalityScore
+import com.iliesbel.yapbackend.domain.users.UserToCreate
 import com.iliesbel.yapbackend.domain.users.persistence.DeviceEntity
-import com.iliesbel.yapbackend.domain.users.persistence.UserEntity
 import com.iliesbel.yapbackend.domain.users.persistence.UserRepository
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import com.iliesbel.yapbackend.infra.userAgent.UserAgent
@@ -13,23 +15,30 @@ import java.util.*
 class UserService(private val userRepository: UserRepository) {
 
     @Transactional
-    fun saveUser(userToCreate: UserToCreate): Long {
-        val user = AuthenticationService.getUserFromContext()
+    fun createOrUpdate(userToCreate: UserToCreate): Long {
+        val user = AuthenticationService.getAccountFromContext()
 
         val foundUser = userRepository.findByEmail(user.email)
+            ?: return userRepository.save(
+                User(
+                    id = null,
+                    email = user.email,
+                    name = userToCreate.name,
+                    personalityScore = PersonalityScore.initial,
+                    loveScore = LoveScore.initial,
+                )
+            ).id!!
 
-        return userRepository.save(
-            UserEntity(
-                id = foundUser?.id,
-                email = user.email,
-                name = userToCreate.name,
-            )
-        ).id!!
+
+
+        return foundUser.apply {
+            name = userToCreate.name
+        }.id!!
     }
 
     @Transactional
     fun addDeviceToUser(userAgent: UserAgent): UUID {
-        val account = AuthenticationService.getUserFromContext()
+        val account = AuthenticationService.getAccountFromContext()
 
         val user = userRepository.getByEmail(account.email)
 
