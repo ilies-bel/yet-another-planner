@@ -38,6 +38,4 @@ class AuthenticationConfiguration(private val userDao: AccountRepository) {
             setPasswordEncoder(passwordEncoder())
         }
     }
-
-
 }
