@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 interface PushSubscriptionJpaRepository : JpaRepository<PushSubscription, Long>
 
 @Repository
-class PushSubscriptionRepository(private val pushSubscriptionJpaRepository: PushSubscriptionJpaRepository){
+class PushSubscriptionRepository(private val pushSubscriptionJpaRepository: PushSubscriptionJpaRepository) {
 
     fun findAll(): List<PushSubscription> {
         return pushSubscriptionJpaRepository.findAll()

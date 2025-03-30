@@ -1,8 +1,8 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
-import com.iliesbel.yapbackend.domain.tasks.domain.TaskService
-import com.iliesbel.yapbackend.domain.tasks.domain.model.Task
-import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskStatus
+import com.iliesbel.yapbackend.domain.tasks.service.TaskService
+import com.iliesbel.yapbackend.domain.tasks.service.model.Task
+import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import org.springframework.web.bind.annotation.*
 

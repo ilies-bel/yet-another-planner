@@ -2,11 +2,11 @@ package com.iliesbel.yapbackend.tasks.presentation
 
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextEntity
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextJpaRepository
-import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskStatus
 import com.iliesbel.yapbackend.domain.tasks.persistence.ProjectEntity
 import com.iliesbel.yapbackend.domain.tasks.persistence.TaskEntity
 import com.iliesbel.yapbackend.domain.tasks.persistence.TaskJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
+import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

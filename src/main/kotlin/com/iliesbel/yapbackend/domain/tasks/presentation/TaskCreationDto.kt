@@ -1,8 +1,8 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
-import com.iliesbel.yapbackend.domain.tasks.domain.TaskCreation
-import com.iliesbel.yapbackend.domain.tasks.domain.model.Difficulty
-import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskContext
+import com.iliesbel.yapbackend.domain.tasks.service.TaskCreation
+import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
+import com.iliesbel.yapbackend.domain.tasks.service.model.TaskContext
 import com.iliesbel.yapbackend.infra.authentication.persistence.AccountEntity
 import java.time.LocalDateTime
 
@@ -13,6 +13,7 @@ data class TaskCreationDto(
     val context: TaskContext?,
     val projectName: String?,
     val dueDate: LocalDateTime?,
+    val url: String?,
 ) {
     fun toTaskCreation(currentUser: AccountEntity): TaskCreation {
         return TaskCreation(
@@ -22,7 +23,8 @@ data class TaskCreationDto(
             contextName = context?.name,
             project = projectName,
             dueDate = dueDate,
-            userEmail = currentUser.email
+            userEmail = currentUser.email,
+            url = url,
         )
     }
 }

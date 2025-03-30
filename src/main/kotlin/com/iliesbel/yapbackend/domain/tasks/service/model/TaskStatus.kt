@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.domain.tasks.domain.model
+package com.iliesbel.yapbackend.domain.tasks.service.model
 
 enum class TaskStatus {
     TO_REFINE,

@@ -1,8 +1,8 @@
-package com.iliesbel.yapbackend.domain.tasks.domain
+package com.iliesbel.yapbackend.domain.tasks.service
 
-import com.iliesbel.yapbackend.domain.tasks.domain.model.Task
 import com.iliesbel.yapbackend.domain.tasks.persistence.TaskRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.TaskFilter
+import com.iliesbel.yapbackend.domain.tasks.service.model.Task
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 

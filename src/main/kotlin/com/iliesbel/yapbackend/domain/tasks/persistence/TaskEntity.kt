@@ -1,8 +1,8 @@
 package com.iliesbel.yapbackend.domain.tasks.persistence
 
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextEntity
-import com.iliesbel.yapbackend.domain.tasks.domain.model.Difficulty
-import com.iliesbel.yapbackend.domain.tasks.domain.model.TaskStatus
+import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
+import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import jakarta.persistence.*
 import java.time.LocalDateTime
 
@@ -30,6 +30,8 @@ class TaskEntity(
 
     @ManyToOne
     val project: ProjectEntity?,
+
+    val url: String?,
 
     val creationDate: LocalDateTime,
 )

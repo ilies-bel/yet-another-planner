@@ -1,4 +1,4 @@
-package com.iliesbel.yapbackend.domain.tasks.domain.model
+package com.iliesbel.yapbackend.domain.tasks.service.model
 
 
 enum class Difficulty {
@@ -8,6 +8,9 @@ enum class Difficulty {
     ;
 
     companion object {
+
+        val DEFAULT = MEDIUM
+
         fun fromScore(difficultyScore: Long): Difficulty {
             if (difficultyScore < 30) {
                 return EASY
