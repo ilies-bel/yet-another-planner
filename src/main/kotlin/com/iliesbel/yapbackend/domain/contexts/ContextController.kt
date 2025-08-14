@@ -14,7 +14,7 @@ class ContextController(
 
     @GetMapping("/contexts")
     fun getAllContexts(): List<Context> {
-        TODO()
+        return contextService.getAllContexts()
     }
 
     @GetMapping("/users/me/contexts")

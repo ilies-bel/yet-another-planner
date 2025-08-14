@@ -15,6 +15,10 @@ class ContextService(private val contextRepository: ContextRepository) {
         )
     }
 
+    fun getAllContexts(): List<Context> {
+        return contextRepository.findByUser()
+    }
+
 
     private fun getDeviceContext(contexts: List<Context>, userAgent: UserAgent): Context? {
         val deviceContexts = contexts.filter { it.type == ContextType.DEVICE }

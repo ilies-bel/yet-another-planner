@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.service.model
 
-class TaskContext(
+data class TaskContext(
     val name: String,
+    val type: String,
 )

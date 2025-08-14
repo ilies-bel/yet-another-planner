@@ -39,6 +39,7 @@ class TaskRepository(
                 TASK.STATUS,
                 TASK.DIFFICULTY,
                 CONTEXT.NAME,
+                CONTEXT.TYPE,
                 TASK.DUE_DATE,
                 PROJECT.NAME,
             )
@@ -47,8 +48,22 @@ class TaskRepository(
             .leftJoin(PROJECT).on(TASK.PROJECT_ID.eq(PROJECT.ID))
 
         // Add status filter if provided
+        var whereConditions = mutableListOf<org.jooq.Condition>()
+
         if (filters.status != null) {
-            selectQuery.where(TASK.STATUS.`in`(filters.status))
+            whereConditions.add(TASK.STATUS.`in`(filters.status))
+        }
+
+        // Add context filter: allow tasks with current context OR no context
+        if (filters.contextId != null) {
+            whereConditions.add(
+                TASK.CONTEXT_ID.eq(filters.contextId)
+                    .or(TASK.CONTEXT_ID.isNull)
+            )
+        }
+
+        if (whereConditions.isNotEmpty()) {
+            selectQuery.where(whereConditions.reduce { acc, condition -> acc.and(condition) })
         }
 
         // Get total count for pagination
@@ -58,8 +73,9 @@ class TaskRepository(
             .leftJoin(CONTEXT).on(TASK.CONTEXT_ID.eq(CONTEXT.ID))
             .leftJoin(PROJECT).on(TASK.PROJECT_ID.eq(PROJECT.ID))
 
-        if (filters.status != null) {
-            countQuery.where(TASK.STATUS.`in`(filters.status))
+        // Apply same filtering logic to count query
+        if (whereConditions.isNotEmpty()) {
+            countQuery.where(whereConditions.reduce { acc, condition -> acc.and(condition) })
         }
 
         val totalCount = countQuery.fetchOne(0, Long::class.java) ?: 0L
@@ -70,13 +86,19 @@ class TaskRepository(
             .offset(filters.page * filters.size)
             .fetch()
             .map { record ->
+
                 Task(
                     id = record.get(TASK.ID)!!,
                     name = record.get(TASK.NAME)!!,
                     description = record.get(TASK.DESCRIPTION),
                     status = TaskStatus.valueOf(record.get(TASK.STATUS)!!),
                     difficulty = record.get(TASK.DIFFICULTY),
-                    context = record.get(CONTEXT.NAME)?.let(::TaskContext),
+                    context = record.get(CONTEXT.NAME)?.let {
+                        TaskContext(
+                            it,
+                            record.get(CONTEXT.TYPE)!!
+                        )
+                    },
                     dueDate = record.get(TASK.DUE_DATE),
                     projectName = record.get(PROJECT.NAME)
                 )
@@ -141,7 +163,12 @@ class TaskRepository(
             description = savedTask.description,
             status = savedTask.status,
             difficulty = savedTask.difficulty.name,
-            context = savedTask.context?.name?.let(::TaskContext),
+            context = savedTask.context?.let {
+                TaskContext(
+                    name = it.name,
+                    type = it.type.name,
+                )
+            },
             projectName = savedTask.project?.name,
             dueDate = savedTask.dueDate
         )

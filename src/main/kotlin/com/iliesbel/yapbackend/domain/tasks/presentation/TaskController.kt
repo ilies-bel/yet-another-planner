@@ -36,5 +36,6 @@ class TaskController(private val taskService: TaskService) {
 data class TaskPageFilter(
     val status: List<TaskStatus>?,
     val page: Int = 0,
-    val size: Int = 20
+    val size: Int = 20,
+    val contextId: Long?
 )
