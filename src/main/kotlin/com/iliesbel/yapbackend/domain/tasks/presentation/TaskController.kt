@@ -1,6 +1,7 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
 import com.iliesbel.yapbackend.domain.tasks.service.TaskService
+import com.iliesbel.yapbackend.domain.tasks.service.TaskUpdate
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
@@ -22,9 +23,12 @@ class TaskController(private val taskService: TaskService) {
         return taskService.create(task.toTaskCreation(currentUser))
     }
 
-    @PatchMapping("/tasks")
-    fun updateTask(@RequestBody task: Task) {
-        TODO()
+    @PatchMapping("/tasks/{id}")
+    fun updateTask(
+        @PathVariable id: Long,
+        @RequestBody taskUpdate: TaskUpdate
+    ): Task {
+        return taskService.update(id, taskUpdate)
     }
 }
 

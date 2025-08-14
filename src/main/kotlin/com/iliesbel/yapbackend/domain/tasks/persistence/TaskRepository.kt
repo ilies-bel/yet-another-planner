@@ -7,6 +7,7 @@ import com.iliesbel.yapbackend.domain.contexts.persistence.ContextJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.TaskFilter
 import com.iliesbel.yapbackend.domain.tasks.service.TaskCreation
+import com.iliesbel.yapbackend.domain.tasks.service.TaskUpdate
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskContext
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
@@ -86,5 +87,42 @@ class TaskRepository(
 
     fun save(taskCreation: TaskCreation) {
         saveAll(listOf(taskCreation))
+    }
+
+    fun update(id: Long, taskUpdate: TaskUpdate): Task {
+        val existingTask =
+            taskJpaRepository.findById(id).orElseThrow { NoSuchElementException("The task with id $id does not exist") }
+
+        // Update all fields since they are now mutable (var)
+        taskUpdate.name?.let { existingTask.name = it }
+        taskUpdate.description?.let { existingTask.description = it }
+        taskUpdate.status?.let { existingTask.status = it }
+        taskUpdate.difficulty?.let { existingTask.difficulty = it }
+        taskUpdate.dueDate?.let { existingTask.dueDate = it }
+        taskUpdate.url?.let { existingTask.url = it }
+
+        // Handle context update
+        taskUpdate.contextName?.let { contextName ->
+            existingTask.context = contextRepository.findByName(contextName)
+        }
+
+        // Handle project update
+        taskUpdate.project?.let { projectName ->
+            existingTask.project = projectJpaRepository.findByName(projectName)
+        }
+
+        val savedTask = taskJpaRepository.save(existingTask)
+
+        // Convert back to Task model
+        return Task(
+            id = savedTask.id!!,
+            name = savedTask.name,
+            description = savedTask.description,
+            status = savedTask.status,
+            difficulty = savedTask.difficulty.name,
+            context = savedTask.context?.name?.let(::TaskContext),
+            projectName = savedTask.project?.name,
+            dueDate = savedTask.dueDate
+        )
     }
 }

@@ -26,12 +26,12 @@ class TaskEntity(
     var dueDate: LocalDateTime?,
 
     @ManyToOne
-    val context: ContextEntity?,
+    var context: ContextEntity?,
 
     @ManyToOne
-    val project: ProjectEntity?,
+    var project: ProjectEntity?,
 
-    val url: String?,
+    var url: String?,
 
     val creationDate: LocalDateTime,
 )

@@ -19,4 +19,9 @@ class TaskService(
     fun create(task: TaskCreation) {
         taskRepository.save(task)
     }
+
+    @Transactional
+    fun update(id: Long, taskUpdate: TaskUpdate): Task {
+        return taskRepository.update(id, taskUpdate)
+    }
 }
