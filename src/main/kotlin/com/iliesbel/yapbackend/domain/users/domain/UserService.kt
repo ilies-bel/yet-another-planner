@@ -2,6 +2,7 @@ package com.iliesbel.yapbackend.domain.users.domain
 
 import com.iliesbel.yapbackend.domain.chatbot.domain.LoveScore
 import com.iliesbel.yapbackend.domain.chatbot.domain.PersonalityScore
+import com.iliesbel.yapbackend.domain.users.DeviceCreationCommand
 import com.iliesbel.yapbackend.domain.users.UserToCreate
 import com.iliesbel.yapbackend.domain.users.persistence.DeviceEntity
 import com.iliesbel.yapbackend.domain.users.persistence.UserRepository
@@ -37,7 +38,7 @@ class UserService(private val userRepository: UserRepository) {
     }
 
     @Transactional
-    fun addDeviceToUser(userAgent: UserAgent): UUID {
+    fun addDeviceToUser(userAgent: UserAgent, device: DeviceCreationCommand): UUID {
         val account = AuthenticationService.getAccountFromContext()
 
         val user = userRepository.getByEmail(account.email)
@@ -49,7 +50,7 @@ class UserService(private val userRepository: UserRepository) {
         user.devices.add(
             DeviceEntity(
                 id = userAgent.deviceId,
-                name = null,
+                name = device.name,
                 type = userAgent.deviceType,
                 platform = userAgent.platform,
                 lastPlatformVersion = userAgent.platformVersion,

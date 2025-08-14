@@ -5,13 +5,16 @@ import com.iliesbel.jooq.generated.tables.references.PROJECT
 import com.iliesbel.jooq.generated.tables.references.TASK
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
-import com.iliesbel.yapbackend.domain.tasks.presentation.TaskFilter
+import com.iliesbel.yapbackend.domain.tasks.presentation.TaskPageFilter
 import com.iliesbel.yapbackend.domain.tasks.service.TaskCreation
 import com.iliesbel.yapbackend.domain.tasks.service.TaskUpdate
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskContext
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import org.jooq.DSLContext
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
 
@@ -24,8 +27,10 @@ class TaskRepository(
     private val projectJpaRepository: ProjectJpaRepository,
 ) {
 
-    fun findAll(filters: TaskFilter): List<Task> {
+    fun findAll(filters: TaskPageFilter): Page<Task> {
+        val pageable = PageRequest.of(filters.page, filters.size)
 
+        // Build the base query
         val selectQuery = dslContext
             .select(
                 TASK.ID,
@@ -41,11 +46,28 @@ class TaskRepository(
             .leftJoin(CONTEXT).on(TASK.CONTEXT_ID.eq(CONTEXT.ID))
             .leftJoin(PROJECT).on(TASK.PROJECT_ID.eq(PROJECT.ID))
 
+        // Add status filter if provided
         if (filters.status != null) {
             selectQuery.where(TASK.STATUS.`in`(filters.status))
         }
 
+        // Get total count for pagination
+        val countQuery = dslContext
+            .selectCount()
+            .from(TASK)
+            .leftJoin(CONTEXT).on(TASK.CONTEXT_ID.eq(CONTEXT.ID))
+            .leftJoin(PROJECT).on(TASK.PROJECT_ID.eq(PROJECT.ID))
+
+        if (filters.status != null) {
+            countQuery.where(TASK.STATUS.`in`(filters.status))
+        }
+
+        val totalCount = countQuery.fetchOne(0, Long::class.java) ?: 0L
+
+        // Apply pagination
         val result = selectQuery
+            .limit(filters.size)
+            .offset(filters.page * filters.size)
             .fetch()
             .map { record ->
                 Task(
@@ -60,8 +82,7 @@ class TaskRepository(
                 )
             }
 
-
-        return result
+        return PageImpl(result, pageable, totalCount)
     }
 
     fun saveAll(taskCreations: List<TaskCreation>) {

@@ -5,14 +5,15 @@ import com.iliesbel.yapbackend.domain.tasks.service.TaskUpdate
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
+import org.springframework.data.domain.Page
 import org.springframework.web.bind.annotation.*
 
 @RestController
 class TaskController(private val taskService: TaskService) {
     @GetMapping("/tasks")
     fun getTasksForCurrentUser(
-        filters: TaskFilter
-    ): List<Task> {
+        filters: TaskPageFilter
+    ): Page<Task> {
         return taskService.findAll(filters)
     }
 
@@ -32,6 +33,8 @@ class TaskController(private val taskService: TaskService) {
     }
 }
 
-data class TaskFilter(
+data class TaskPageFilter(
     val status: List<TaskStatus>?,
+    val page: Int = 0,
+    val size: Int = 20
 )

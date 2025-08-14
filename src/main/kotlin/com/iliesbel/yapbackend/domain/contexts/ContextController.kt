@@ -17,7 +17,7 @@ class ContextController(
         TODO()
     }
 
-    @GetMapping("/contexts/current")
+    @GetMapping("/users/me/contexts")
     fun getCurrent(userAgent: UserAgent): UserContexts {
         return contextService.getCurrentContexts(userAgent)
     }

@@ -9,7 +9,7 @@ import java.util.*
 class DeviceEntity(
     @Id
     val id: UUID,
-    val name: String?,
+    val name: String,
     val type: String,
     val platform: String,
     val lastPlatformVersion: String,

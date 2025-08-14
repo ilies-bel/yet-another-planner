@@ -1,12 +1,11 @@
 package com.iliesbel.yapbackend.domain.contexts.domain
 
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextRepository
-import com.iliesbel.yapbackend.domain.users.persistence.UserRepository
 import com.iliesbel.yapbackend.infra.userAgent.UserAgent
 import org.springframework.stereotype.Service
 
 @Service
-class ContextService(private val contextRepository: ContextRepository, private val userRepository: UserRepository) {
+class ContextService(private val contextRepository: ContextRepository) {
 
     fun getCurrentContexts(userAgent: UserAgent): UserContexts {
         val contexts = contextRepository.findByUser()

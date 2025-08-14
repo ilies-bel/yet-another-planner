@@ -1,8 +1,9 @@
 package com.iliesbel.yapbackend.domain.tasks.service
 
 import com.iliesbel.yapbackend.domain.tasks.persistence.TaskRepository
-import com.iliesbel.yapbackend.domain.tasks.presentation.TaskFilter
+import com.iliesbel.yapbackend.domain.tasks.presentation.TaskPageFilter
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -11,7 +12,7 @@ class TaskService(
     val taskRepository: TaskRepository,
 ) {
     @Transactional(readOnly = true)
-    fun findAll(filters: TaskFilter): List<Task> {
+    fun findAll(filters: TaskPageFilter): Page<Task> {
         return taskRepository.findAll(filters)
     }
 
