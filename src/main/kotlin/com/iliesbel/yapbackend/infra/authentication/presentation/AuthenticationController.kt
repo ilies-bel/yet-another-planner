@@ -2,6 +2,8 @@ package com.iliesbel.yapbackend.infra.authentication.presentation
 
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import com.iliesbel.yapbackend.infra.authentication.JwtService
+import com.iliesbel.yapbackend.domain.users.domain.DeviceService
+import com.iliesbel.yapbackend.infra.userAgent.UserAgent
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 class AuthenticationController(
     private val authenticationService: AuthenticationService,
     private val jwtService: JwtService,
+    private val deviceService: DeviceService,
 ) {
     @PostMapping("/auth/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -21,19 +24,29 @@ class AuthenticationController(
     }
 
     @PostMapping("/auth/login")
-    fun login(@RequestBody loginUserDto: LoginUserDto): LoginResponse {
+    fun login(@RequestBody loginUserDto: LoginUserDto, userAgent: UserAgent): LoginResponse {
         val user = authenticationService.authenticate(loginUserDto)
 
         val jwtToken: String = jwtService.generateToken(user)
+
+        // Update device lastUsedAt on successful login
+        userAgent.deviceId?.let { deviceId ->
+            deviceService.updateDeviceLastUsedAt(deviceId)
+        }
 
         return LoginResponse(jwtToken, jwtService.getExpirationTime())
     }
 
     @PostMapping("/auth/refresh")
-    fun login(): LoginResponse {
+    fun refresh(userAgent: UserAgent): LoginResponse {
         val user = AuthenticationService.getAccountFromContext()
 
         val jwtToken: String = jwtService.generateToken(user)
+
+        // Update device lastUsedAt on successful refresh
+        userAgent.deviceId?.let { deviceId ->
+            deviceService.updateDeviceLastUsedAt(deviceId)
+        }
 
         return LoginResponse(jwtToken, jwtService.getExpirationTime())
     }

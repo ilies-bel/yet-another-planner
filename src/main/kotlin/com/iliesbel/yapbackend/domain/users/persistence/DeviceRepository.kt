@@ -4,6 +4,7 @@ import com.iliesbel.yapbackend.domain.users.domain.Device
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
+import java.util.*
 
 @Repository
 class DeviceRepository(private val deviceJpaRepository: DeviceJpaRepository) {
@@ -12,6 +13,15 @@ class DeviceRepository(private val deviceJpaRepository: DeviceJpaRepository) {
         val account = AuthenticationService.getAccountFromContext()
         return deviceJpaRepository.findByUserEmail(account.email)
             .map(DeviceEntity::toDomain)
+    }
+    
+    fun updateDeviceLastUsedAt(deviceId: UUID) {
+        deviceJpaRepository.updateLastUsedAt(deviceId, LocalDateTime.now())
+    }
+    
+    fun findDeviceForCurrentUser(deviceId: UUID): DeviceEntity? {
+        val account = AuthenticationService.getAccountFromContext()
+        return deviceJpaRepository.findByIdAndUserEmail(deviceId, account.email)
     }
 }
 
@@ -23,6 +33,6 @@ fun DeviceEntity.toDomain(): Device {
         platform = platform,
         lastPlatformVersion = lastPlatformVersion,
         browser = browser,
-        LocalDateTime.now(),
+        lastUsedAt = lastUsedAt
     )
 }
