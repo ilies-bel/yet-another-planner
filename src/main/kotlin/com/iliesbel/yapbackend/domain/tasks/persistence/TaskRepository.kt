@@ -39,7 +39,6 @@ class TaskRepository(
                 TASK.STATUS,
                 TASK.DIFFICULTY,
                 CONTEXT.NAME,
-                CONTEXT.TYPE,
                 TASK.DUE_DATE,
                 PROJECT.NAME,
             )
@@ -96,11 +95,12 @@ class TaskRepository(
                     context = record.get(CONTEXT.NAME)?.let {
                         TaskContext(
                             it,
-                            record.get(CONTEXT.TYPE)!!
+                            "TIME"
                         )
                     },
                     dueDate = record.get(TASK.DUE_DATE),
-                    projectName = record.get(PROJECT.NAME)
+                    projectName = record.get(PROJECT.NAME),
+                    timeContext = null // Will be populated from TaskEntity when we migrate to JPA-only queries
                 )
             }
 
@@ -122,6 +122,7 @@ class TaskRepository(
                 dueDate = taskCreation.dueDate,
                 creationDate = LocalDateTime.now(),
                 url = taskCreation.url,
+                timeContext = taskCreation.timeContext,
             )
         }
 
@@ -143,6 +144,7 @@ class TaskRepository(
         taskUpdate.difficulty?.let { existingTask.difficulty = it }
         taskUpdate.dueDate?.let { existingTask.dueDate = it }
         taskUpdate.url?.let { existingTask.url = it }
+        taskUpdate.timeContext?.let { existingTask.timeContext = it }
 
         // Handle context update
         taskUpdate.contextName?.let { contextName ->
@@ -170,7 +172,8 @@ class TaskRepository(
                 )
             },
             projectName = savedTask.project?.name,
-            dueDate = savedTask.dueDate
+            dueDate = savedTask.dueDate,
+            timeContext = savedTask.timeContext
         )
     }
 }

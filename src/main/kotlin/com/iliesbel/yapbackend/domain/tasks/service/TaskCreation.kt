@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.service
 
+import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
 import java.time.LocalDateTime
 
@@ -12,4 +13,5 @@ data class TaskCreation(
     val contextName: String?,
     val userEmail: String,
     val url: String?,
+    val timeContext: DayPeriod?,
 )

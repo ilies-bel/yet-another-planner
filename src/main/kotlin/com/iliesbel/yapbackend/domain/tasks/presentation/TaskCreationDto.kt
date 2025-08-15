@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
+import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import com.iliesbel.yapbackend.domain.tasks.service.TaskCreation
 import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskContext
@@ -14,6 +15,7 @@ data class TaskCreationDto(
     val projectName: String?,
     val dueDate: LocalDateTime?,
     val url: String?,
+    val timeContext: DayPeriod?,
 ) {
     fun toTaskCreation(currentUser: AccountEntity): TaskCreation {
         return TaskCreation(
@@ -25,6 +27,7 @@ data class TaskCreationDto(
             dueDate = dueDate,
             userEmail = currentUser.email,
             url = url,
+            timeContext = timeContext,
         )
     }
 }

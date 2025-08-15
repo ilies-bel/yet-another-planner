@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.service.model
 
+import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import java.time.LocalDateTime
 
 data class Task(
@@ -11,5 +12,6 @@ data class Task(
     val context: TaskContext?,
     val projectName: String?,
     val dueDate: LocalDateTime?,
+    val timeContext: DayPeriod?,
 )
 

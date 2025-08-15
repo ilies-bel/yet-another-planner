@@ -1,0 +1,1 @@
+ALTER TABLE task ADD COLUMN time_context VARCHAR(20);

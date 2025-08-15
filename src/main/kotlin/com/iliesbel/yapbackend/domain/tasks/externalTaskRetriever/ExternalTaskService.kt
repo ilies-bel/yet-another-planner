@@ -52,6 +52,7 @@ class ExternalTaskService(
                     project = null,
                     dueDate = null,
                     contextName = null,
+                    timeContext = null,
                 )
             }
         )

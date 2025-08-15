@@ -22,7 +22,6 @@ class ContextController(
         return contextService.getCurrentContexts(userAgent)
     }
 
-
     @PostMapping("/contexts")
     fun createContext(contextCreation: ContextCreation, userAgent: UserAgent): Long {
         return contextCreationService.create(contextCreation, userAgent)
@@ -32,6 +31,10 @@ class ContextController(
 data class ContextCreation(
     val type: ContextType,
     val name: String,
+)
+
+data class TimeContextResponse(
+    val currentDayPeriod: DayPeriod
 )
 
 

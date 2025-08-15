@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.persistence
 
+import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextEntity
 import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
@@ -34,5 +35,8 @@ class TaskEntity(
     var url: String?,
 
     val creationDate: LocalDateTime,
+
+    @Enumerated(EnumType.STRING)
+    var timeContext: DayPeriod?,
 )
 

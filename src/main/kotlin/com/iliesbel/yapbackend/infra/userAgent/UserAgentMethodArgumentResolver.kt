@@ -19,7 +19,7 @@ class UserAgentMethodArgumentResolver : HandlerMethodArgumentResolver {
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
     ): Any {
-        val deviceId = UUID.fromString(webRequest.getHeader("X-Device"))
+        val deviceId = webRequest.getHeader("X-Device")?.let { UUID.fromString(webRequest.getHeader("X-Device")) }
 
         val userAgentString = webRequest.getHeader("User-Agent")
             ?: throw IllegalArgumentException("User-Agent header is missing")
