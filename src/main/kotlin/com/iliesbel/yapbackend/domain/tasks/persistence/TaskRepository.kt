@@ -60,6 +60,14 @@ class TaskRepository(
                     .or(TASK.CONTEXT_ID.isNull)
             )
         }
+        
+        // Add time context filter: allow tasks with current time context OR no time context
+        if (filters.timeContext != null) {
+            whereConditions.add(
+                TASK.TIME_CONTEXT.eq(filters.timeContext.name)
+                    .or(TASK.TIME_CONTEXT.isNull)
+            )
+        }
 
         if (whereConditions.isNotEmpty()) {
             selectQuery.where(whereConditions.reduce { acc, condition -> acc.and(condition) })

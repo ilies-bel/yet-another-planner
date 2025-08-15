@@ -1,5 +1,6 @@
 package com.iliesbel.yapbackend.domain.tasks.presentation
 
+import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import com.iliesbel.yapbackend.domain.tasks.service.TaskService
 import com.iliesbel.yapbackend.domain.tasks.service.TaskUpdate
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
@@ -37,5 +38,6 @@ data class TaskPageFilter(
     val status: List<TaskStatus>?,
     val page: Int = 0,
     val size: Int = 20,
-    val contextId: Long?
+    val contextId: Long?,
+    val timeContext: DayPeriod?
 )
