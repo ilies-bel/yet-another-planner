@@ -23,6 +23,10 @@ class DeviceRepository(private val deviceJpaRepository: DeviceJpaRepository) {
         val account = AuthenticationService.getAccountFromContext()
         return deviceJpaRepository.findByIdAndUserEmail(deviceId, account.email)
     }
+    
+    fun deleteDevice(deviceId: UUID) {
+        deviceJpaRepository.deleteById(deviceId)
+    }
 }
 
 fun DeviceEntity.toDomain(): Device {

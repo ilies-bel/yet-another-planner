@@ -21,4 +21,13 @@ class DeviceService(private val deviceRepository: DeviceRepository) {
             deviceRepository.updateDeviceLastUsedAt(deviceId)
         }
     }
+    
+    @Transactional
+    fun deleteDevice(deviceId: String) {
+        val uuid = UUID.fromString(deviceId)
+        val device = deviceRepository.findDeviceForCurrentUser(uuid)
+        if (device != null) {
+            deviceRepository.deleteDevice(uuid)
+        }
+    }
 }

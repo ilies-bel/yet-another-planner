@@ -4,10 +4,7 @@ import com.iliesbel.yapbackend.domain.users.domain.Device
 import com.iliesbel.yapbackend.domain.users.domain.DeviceService
 import com.iliesbel.yapbackend.domain.users.domain.UserService
 import com.iliesbel.yapbackend.infra.userAgent.UserAgent
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
@@ -29,6 +26,11 @@ class UserController(
     @GetMapping("/users/current/devices")
     fun getCurrentUserDevices(): List<Device> {
         return deviceService.getCurrentUserDevices()
+    }
+
+    @DeleteMapping("/users/current/devices/{deviceId}")
+    fun deleteDevice(@PathVariable deviceId: String) {
+        deviceService.deleteDevice(deviceId)
     }
 }
 
