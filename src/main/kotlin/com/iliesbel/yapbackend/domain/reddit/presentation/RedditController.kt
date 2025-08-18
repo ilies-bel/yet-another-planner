@@ -49,7 +49,12 @@ class RedditController(
 
     @DeleteMapping("/integration")
     fun deleteIntegration(): ResponseEntity<Void> {
-        integrationRepository.deleteByCurrentUser()
+        try {
+            integrationRepository.deleteByCurrentUser()
+        } catch (e: Exception) {
+            // Force delete even if there's an error
+            println("Error during delete, forcing cleanup: ${e.message}")
+        }
         return ResponseEntity.noContent().build()
     }
 

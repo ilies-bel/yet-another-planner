@@ -26,15 +26,20 @@ class RedditCaptureService(
     @Transactional
     fun startCapture(): CaptureJob {
         val userEmail = AuthenticationService.getAccountFromContext().email
-        val integration = integrationRepository.findByCurrentUser()
+        var integration = integrationRepository.findByCurrentUser()
             ?: throw RuntimeException("No Reddit integration found for current user")
         
-        // Refresh token if needed
-        val validIntegration = if (isTokenExpired(integration)) {
-            redditOAuthService.refreshToken(integration)
-        } else {
-            integration
+        // Refresh token if needed or expired
+        if (isTokenExpired(integration) || integration.redditUsername == null) {
+            integration = redditOAuthService.refreshToken(integration)
         }
+        
+        // Fetch username if still missing after refresh
+        if (integration.redditUsername == null) {
+            integration = fetchAndUpdateUsername(integration)
+        }
+        
+        val validIntegration = integration
         
         return try {
             val posts = redditApiClient.fetchSavedPosts(validIntegration)
@@ -52,18 +57,29 @@ class RedditCaptureService(
                 )
             )
         } catch (e: Exception) {
+            val errorMessage = when {
+                e.message?.contains("403") == true || e.message?.contains("Forbidden") == true -> 
+                    "Reddit authorization failed. Please disconnect and reconnect your Reddit account to grant the required permissions."
+                else -> e.message ?: "Unknown error occurred"
+            }
             CaptureJob(
                 id = UUID.randomUUID(),
                 userEmail = userEmail,
                 status = CaptureStatus.FAILED,
                 progress = CaptureProgress(),
-                errorMessage = e.message
+                errorMessage = errorMessage
             )
         }
     }
     
     private fun isTokenExpired(integration: RedditIntegration): Boolean {
         return integration.tokenExpiresAt?.isBefore(java.time.LocalDateTime.now()) ?: false
+    }
+    
+    private fun fetchAndUpdateUsername(integration: RedditIntegration): RedditIntegration {
+        val username = redditOAuthService.fetchRedditUsername(integration.accessToken)
+        val updated = integration.copy(redditUsername = username)
+        return integrationRepository.save(updated)
     }
     
     private fun createTasksFromPosts(posts: List<RedditPost>, userEmail: String): CaptureResult {

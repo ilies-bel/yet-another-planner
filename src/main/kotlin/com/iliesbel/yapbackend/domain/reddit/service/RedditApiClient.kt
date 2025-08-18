@@ -35,22 +35,28 @@ class RedditApiClient(
             set("User-Agent", "YetAnotherPlanner/1.0")
         }
         
-        val url = buildUrl(after)
+        val url = buildUrl(integration.redditUsername, after)
         val request = HttpEntity<String>(headers)
         
-        val response = restTemplate.exchange(
-            url,
-            HttpMethod.GET,
-            request,
-            RedditApiResponse::class.java
-        )
+        val response = try {
+            restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                request,
+                RedditApiResponse::class.java
+            )
+        } catch (e: Exception) {
+            throw RuntimeException("Failed to fetch saved posts from Reddit: ${e.message}", e)
+        }
         
         val apiResponse = response.body ?: throw RuntimeException("Failed to fetch saved posts")
         return parseSavedPosts(apiResponse)
     }
     
-    private fun buildUrl(after: String?): String {
-        var url = "https://oauth.reddit.com/user/me/saved?limit=100"
+    private fun buildUrl(username: String?, after: String?): String {
+        // Use username if available, fallback to "me"
+        val user = username ?: "me"
+        var url = "https://oauth.reddit.com/user/$user/saved?limit=100&raw_json=1"
         if (after != null) {
             url += "&after=$after"
         }

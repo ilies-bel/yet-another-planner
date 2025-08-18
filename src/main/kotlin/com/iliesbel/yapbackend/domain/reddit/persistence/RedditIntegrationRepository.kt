@@ -3,6 +3,7 @@ package com.iliesbel.yapbackend.domain.reddit.persistence
 import com.iliesbel.yapbackend.domain.reddit.domain.RedditIntegration
 import com.iliesbel.yapbackend.infra.authentication.AuthenticationService
 import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Repository
@@ -44,6 +45,7 @@ class RedditIntegrationRepository(
         return jpaRepository.save(entity).toDomain()
     }
 
+    @Transactional
     fun deleteByCurrentUser() {
         val account = AuthenticationService.getAccountFromContext()
         jpaRepository.deleteByUserEmail(account.email)

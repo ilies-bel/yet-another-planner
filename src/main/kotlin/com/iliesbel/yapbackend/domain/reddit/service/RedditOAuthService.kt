@@ -39,7 +39,7 @@ class RedditOAuthService(
             "state" to state,
             "redirect_uri" to redirectUri,
             "duration" to "permanent",
-            "scope" to "history"
+            "scope" to "identity history read"
         )
         
         val queryString = params.entries.joinToString("&") { "${it.key}=${it.value}" }
@@ -58,10 +58,13 @@ class RedditOAuthService(
         
         val tokenResponse = exchangeCodeForToken(code)
         
+        // Fetch Reddit username using the access token
+        val redditUsername = fetchRedditUsername(tokenResponse.accessToken)
+        
         val integration = RedditIntegration(
             id = UUID.randomUUID(),
             userEmail = userEmail,
-            redditUsername = null, // Will be fetched later
+            redditUsername = redditUsername,
             accessToken = tokenResponse.accessToken,
             refreshToken = tokenResponse.refreshToken,
             tokenExpiresAt = LocalDateTime.now().plusSeconds(tokenResponse.expiresIn),
@@ -70,6 +73,24 @@ class RedditOAuthService(
         )
         
         return integrationRepository.save(integration)
+    }
+    
+    fun fetchRedditUsername(accessToken: String): String {
+        val headers = HttpHeaders().apply {
+            setBearerAuth(accessToken)
+            set("User-Agent", "YetAnotherPlanner/1.0")
+        }
+        
+        val request = HttpEntity<String>(headers)
+        val response = restTemplate.exchange(
+            "https://oauth.reddit.com/api/v1/me",
+            HttpMethod.GET,
+            request,
+            Map::class.java
+        )
+        
+        val userData = response.body ?: throw RuntimeException("Failed to fetch Reddit user info")
+        return userData["name"] as String
     }
 
     private fun exchangeCodeForToken(code: String): TokenResponse {
@@ -122,10 +143,23 @@ class RedditOAuthService(
         
         val tokenResponse = response.body ?: throw RuntimeException("Failed to refresh token")
         
+        // Fetch username if missing
+        val username = if (integration.redditUsername == null) {
+            try {
+                fetchRedditUsername(tokenResponse.accessToken)
+            } catch (e: Exception) {
+                println("Failed to fetch Reddit username: ${e.message}")
+                null
+            }
+        } else {
+            integration.redditUsername
+        }
+        
         val updatedIntegration = integration.copy(
             accessToken = tokenResponse.accessToken,
             refreshToken = tokenResponse.refreshToken ?: integration.refreshToken,
             tokenExpiresAt = LocalDateTime.now().plusSeconds(tokenResponse.expiresIn),
+            redditUsername = username,
             updatedAt = LocalDateTime.now()
         )
         
