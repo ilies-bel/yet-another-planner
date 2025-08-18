@@ -31,6 +31,7 @@ class SecurityConfiguration(
             authorizeHttpRequests {
                 authorize("/auth/**", permitAll)
                 authorize("/api/public/**", permitAll)
+                authorize("/reddit/callback", authenticated)
                 authorize("/actuator/**", permitAll)
 
                 authorize("/error", permitAll)

@@ -24,3 +24,8 @@ notification:
     enabled: true
     public-key: ${VAPID_PUBLIC_KEY:BGgL7I82SAQM78oyGwaJdrQFhVfZqL9h4Y18BLtgJQ-9pSGXwxqAWQudqmcv41RcWgk1ssUeItv4-8khxbhYveM=}
     private-key: ${VAPID_PRIVATE_KEY:ANlfcVVFB4JiMYcI74_h9h04QZ1Ks96AyEa1yrMgDwn3}
+
+reddit:
+    client-id: ${REDDIT_CLIENT_ID:your-reddit-client-id}
+    client-secret: ${REDDIT_CLIENT_SECRET:your-reddit-client-secret}
+    redirect-uri: ${REDDIT_REDIRECT_URI:http://localhost:8080/api/reddit/callback}

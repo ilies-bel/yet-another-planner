@@ -38,5 +38,9 @@ class TaskEntity(
 
     @Enumerated(EnumType.STRING)
     var timeContext: DayPeriod?,
+    
+    var sourceUrl: String?,
+    
+    var sourceType: String?,
 )
 

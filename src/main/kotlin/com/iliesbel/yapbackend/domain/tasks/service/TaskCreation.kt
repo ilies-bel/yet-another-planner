@@ -2,11 +2,13 @@ package com.iliesbel.yapbackend.domain.tasks.service
 
 import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
+import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import java.time.LocalDateTime
 
 data class TaskCreation(
     val name: String,
     val difficulty: Difficulty,
+    val status: TaskStatus = TaskStatus.TO_REFINE,
     val description: String?,
     val project: String?,
     val dueDate: LocalDateTime?,
@@ -14,4 +16,6 @@ data class TaskCreation(
     val userEmail: String,
     val url: String?,
     val timeContext: DayPeriod?,
+    val sourceUrl: String? = null,
+    val sourceType: String? = null,
 )

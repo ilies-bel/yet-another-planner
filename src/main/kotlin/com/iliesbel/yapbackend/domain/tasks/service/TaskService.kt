@@ -25,4 +25,9 @@ class TaskService(
     fun update(id: Long, taskUpdate: TaskUpdate): Task {
         return taskRepository.update(id, taskUpdate)
     }
+    
+    @Transactional(readOnly = true)
+    fun findBySourceUrl(sourceUrl: String): Task? {
+        return taskRepository.findBySourceUrl(sourceUrl)
+    }
 }

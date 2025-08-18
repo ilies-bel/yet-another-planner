@@ -123,7 +123,7 @@ class TaskRepository(
             TaskEntity(
                 name = taskCreation.name,
                 difficulty = taskCreation.difficulty,
-                status = TaskStatus.TO_REFINE,
+                status = taskCreation.status,
                 context = context,
                 description = taskCreation.description,
                 project = project,
@@ -131,6 +131,8 @@ class TaskRepository(
                 creationDate = LocalDateTime.now(),
                 url = taskCreation.url,
                 timeContext = taskCreation.timeContext,
+                sourceUrl = taskCreation.sourceUrl,
+                sourceType = taskCreation.sourceType,
             )
         }
 
@@ -183,5 +185,26 @@ class TaskRepository(
             dueDate = savedTask.dueDate,
             timeContext = savedTask.timeContext
         )
+    }
+    
+    fun findBySourceUrl(sourceUrl: String): Task? {
+        return taskJpaRepository.findBySourceUrl(sourceUrl)?.let { entity ->
+            Task(
+                id = entity.id!!,
+                name = entity.name,
+                description = entity.description,
+                status = entity.status,
+                difficulty = entity.difficulty.name,
+                context = entity.context?.let {
+                    TaskContext(
+                        name = it.name,
+                        type = it.type.name,
+                    )
+                },
+                projectName = entity.project?.name,
+                dueDate = entity.dueDate,
+                timeContext = entity.timeContext
+            )
+        }
     }
 }

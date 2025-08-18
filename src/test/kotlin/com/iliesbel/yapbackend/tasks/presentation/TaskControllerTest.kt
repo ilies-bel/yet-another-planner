@@ -70,7 +70,10 @@ class TaskRepositoryIntegrationTest {
                 context = context,
                 project = project,
                 url = null,
-                creationDate = LocalDateTime.now()
+                creationDate = LocalDateTime.now(),
+                timeContext = null,
+                sourceUrl = null,
+                sourceType = null
             ),
             TaskEntity(
                 name = "Task 2",
@@ -81,7 +84,10 @@ class TaskRepositoryIntegrationTest {
                 context = context,
                 project = project,
                 url = null,
-                creationDate = LocalDateTime.now()
+                creationDate = LocalDateTime.now(),
+                timeContext = null,
+                sourceUrl = null,
+                sourceType = null
             ),
             TaskEntity(
                 name = "Task 3",
@@ -92,7 +98,10 @@ class TaskRepositoryIntegrationTest {
                 context = context,
                 project = project,
                 url = null,
-                creationDate = LocalDateTime.now()
+                creationDate = LocalDateTime.now(),
+                timeContext = null,
+                sourceUrl = null,
+                sourceType = null
             )
         )
 
