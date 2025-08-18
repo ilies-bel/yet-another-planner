@@ -30,4 +30,9 @@ class TaskService(
     fun findBySourceUrl(sourceUrl: String): Task? {
         return taskRepository.findBySourceUrl(sourceUrl)
     }
+    
+    @Transactional(readOnly = true)
+    fun findBySourceType(sourceType: String, userEmail: String): List<Task> {
+        return taskRepository.findBySourceTypeAndUserEmail(sourceType, userEmail)
+    }
 }

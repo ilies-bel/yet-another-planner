@@ -63,6 +63,12 @@ class RedditController(
         val job = captureService.startCapture()
         return ResponseEntity.ok(job)
     }
+    
+    @GetMapping("/captured-tasks")
+    fun getCapturedTasks(): ResponseEntity<List<CapturedTask>> {
+        val tasks = captureService.getCapturedTasks()
+        return ResponseEntity.ok(tasks)
+    }
 }
 
 data class AuthUrlResponse(
@@ -72,5 +78,14 @@ data class AuthUrlResponse(
 data class CallbackRequest(
     val code: String,
     val state: String
+)
+
+data class CapturedTask(
+    val id: Long,
+    val name: String,
+    val url: String?,
+    val sourceUrl: String?,
+    val createdAt: String,
+    val status: String
 )
 

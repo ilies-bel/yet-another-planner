@@ -6,6 +6,7 @@ import com.iliesbel.yapbackend.domain.reddit.domain.CaptureJob
 import com.iliesbel.yapbackend.domain.reddit.domain.CaptureStatus
 import com.iliesbel.yapbackend.domain.reddit.domain.CaptureProgress
 import com.iliesbel.yapbackend.domain.reddit.persistence.RedditIntegrationRepository
+import com.iliesbel.yapbackend.domain.reddit.presentation.CapturedTask
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import com.iliesbel.yapbackend.domain.tasks.service.TaskService
 import com.iliesbel.yapbackend.domain.tasks.service.TaskCreation
@@ -135,6 +136,21 @@ class RedditCaptureService(
         }
         
         return parts.joinToString("\n\n")
+    }
+    
+    fun getCapturedTasks(): List<CapturedTask> {
+        val userEmail = AuthenticationService.getAccountFromContext().email
+        // Get tasks that were captured from Reddit
+        return taskService.findBySourceType("reddit", userEmail).map { task ->
+            CapturedTask(
+                id = task.id,
+                name = task.name,
+                url = task.url,
+                sourceUrl = task.sourceUrl,
+                createdAt = task.createdAt.toString(),
+                status = task.status.name
+            )
+        }
     }
 }
 

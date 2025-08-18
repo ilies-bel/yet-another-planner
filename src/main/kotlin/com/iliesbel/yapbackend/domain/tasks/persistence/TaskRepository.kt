@@ -203,7 +203,36 @@ class TaskRepository(
                 },
                 projectName = entity.project?.name,
                 dueDate = entity.dueDate,
-                timeContext = entity.timeContext
+                timeContext = entity.timeContext,
+                url = entity.url,
+                sourceUrl = entity.sourceUrl,
+                createdAt = entity.creationDate
+            )
+        }
+    }
+    
+    fun findBySourceTypeAndUserEmail(sourceType: String, userEmail: String): List<Task> {
+        // For now, return all tasks of this source type
+        // TODO: Add user filtering when TaskEntity has user relationship
+        return taskJpaRepository.findBySourceType(sourceType).map { entity ->
+            Task(
+                id = entity.id!!,
+                name = entity.name,
+                description = entity.description,
+                status = entity.status,
+                difficulty = entity.difficulty.name,
+                context = entity.context?.let {
+                    TaskContext(
+                        name = it.name,
+                        type = it.type.name,
+                    )
+                },
+                projectName = entity.project?.name,
+                dueDate = entity.dueDate,
+                timeContext = entity.timeContext,
+                url = entity.url,
+                sourceUrl = entity.sourceUrl,
+                createdAt = entity.creationDate
             )
         }
     }

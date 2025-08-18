@@ -13,5 +13,8 @@ data class Task(
     val projectName: String?,
     val dueDate: LocalDateTime?,
     val timeContext: DayPeriod?,
+    val url: String? = null,
+    val sourceUrl: String? = null,
+    val createdAt: LocalDateTime? = null
 )
 
