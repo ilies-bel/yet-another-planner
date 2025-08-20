@@ -17,6 +17,15 @@ class GlobalExceptionHandler {
         )
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse)
     }
+
+    @ExceptionHandler(ApiException::class)
+    fun handleApiException(ex: ApiException): ResponseEntity<ErrorResponse> {
+        val errorResponse = ErrorResponse(
+            message = ex.message ?: "An error occurred",
+            status = ex.status.value()
+        )
+        return ResponseEntity.status(ex.status).body(errorResponse)
+    }
 }
 
 data class ErrorResponse(

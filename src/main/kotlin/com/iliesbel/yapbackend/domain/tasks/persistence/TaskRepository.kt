@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
+import jakarta.persistence.EntityManager
 
 
 @Repository
@@ -25,6 +26,7 @@ class TaskRepository(
     private val taskJpaRepository: TaskJpaRepository,
     private val contextRepository: ContextJpaRepository,
     private val projectJpaRepository: ProjectJpaRepository,
+    private val entityManager: EntityManager
 ) {
 
     fun findAll(filters: TaskPageFilter): Page<Task> {
@@ -67,6 +69,11 @@ class TaskRepository(
                 TASK.TIME_CONTEXT.eq(filters.timeContext.name)
                     .or(TASK.TIME_CONTEXT.isNull)
             )
+        }
+        
+        // Add tag filtering - for now, if tag filtering is requested, fall back to JPA approach
+        if (!filters.tagIds.isNullOrEmpty()) {
+            return findAllWithTagsJPA(filters)
         }
 
         if (whereConditions.isNotEmpty()) {
@@ -235,5 +242,141 @@ class TaskRepository(
                 createdAt = entity.creationDate
             )
         }
+    }
+    
+    private fun findAllWithTagsJPA(filters: TaskPageFilter): Page<Task> {
+        val pageable = PageRequest.of(filters.page, filters.size)
+        
+        // Build JPA query with tag filtering
+        val queryBuilder = StringBuilder()
+        queryBuilder.append("SELECT DISTINCT t FROM TaskEntity t")
+        
+        if (!filters.tagIds.isNullOrEmpty()) {
+            queryBuilder.append(" LEFT JOIN t.tags tag")
+        }
+        
+        queryBuilder.append(" LEFT JOIN t.context c")
+        queryBuilder.append(" LEFT JOIN t.project p")
+        queryBuilder.append(" WHERE 1=1")
+        
+        val params = mutableMapOf<String, Any>()
+        
+        // Status filter
+        if (filters.status != null) {
+            queryBuilder.append(" AND t.status IN :statuses")
+            params["statuses"] = filters.status
+        }
+        
+        // Context filter
+        if (filters.contextId != null) {
+            queryBuilder.append(" AND (t.context.id = :contextId OR t.context.id IS NULL)")
+            params["contextId"] = filters.contextId
+        }
+        
+        // Time context filter
+        if (filters.timeContext != null) {
+            queryBuilder.append(" AND (t.timeContext = :timeContext OR t.timeContext IS NULL)")
+            params["timeContext"] = filters.timeContext
+        }
+        
+        // Tag filter
+        if (!filters.tagIds.isNullOrEmpty()) {
+            when (filters.tagMode) {
+                "all" -> {
+                    // Task must have ALL specified tags
+                    queryBuilder.append(" AND tag.id IN :tagIds")
+                    queryBuilder.append(" GROUP BY t.id")
+                    queryBuilder.append(" HAVING COUNT(DISTINCT tag.id) = :tagCount")
+                    params["tagIds"] = filters.tagIds
+                    params["tagCount"] = filters.tagIds.size.toLong()
+                }
+                else -> {
+                    // Task must have ANY of the specified tags (default)
+                    queryBuilder.append(" AND tag.id IN :tagIds")
+                    params["tagIds"] = filters.tagIds
+                }
+            }
+        }
+        
+        // Create query
+        val query = entityManager.createQuery(queryBuilder.toString(), TaskEntity::class.java)
+        params.forEach { (key, value) -> query.setParameter(key, value) }
+        
+        // Apply pagination
+        query.firstResult = filters.page * filters.size
+        query.maxResults = filters.size
+        
+        val resultList = query.resultList
+        
+        // Create count query for pagination
+        val countQueryBuilder = StringBuilder()
+        countQueryBuilder.append("SELECT COUNT(DISTINCT t.id) FROM TaskEntity t")
+        
+        if (!filters.tagIds.isNullOrEmpty()) {
+            countQueryBuilder.append(" LEFT JOIN t.tags tag")
+        }
+        
+        countQueryBuilder.append(" LEFT JOIN t.context c")
+        countQueryBuilder.append(" LEFT JOIN t.project p")
+        countQueryBuilder.append(" WHERE 1=1")
+        
+        // Apply same filters to count query
+        if (filters.status != null) {
+            countQueryBuilder.append(" AND t.status IN :statuses")
+        }
+        if (filters.contextId != null) {
+            countQueryBuilder.append(" AND (t.context.id = :contextId OR t.context.id IS NULL)")
+        }
+        if (filters.timeContext != null) {
+            countQueryBuilder.append(" AND (t.timeContext = :timeContext OR t.timeContext IS NULL)")
+        }
+        if (!filters.tagIds.isNullOrEmpty()) {
+            when (filters.tagMode) {
+                "all" -> {
+                    countQueryBuilder.append(" AND tag.id IN :tagIds")
+                    countQueryBuilder.append(" GROUP BY t.id")
+                    countQueryBuilder.append(" HAVING COUNT(DISTINCT tag.id) = :tagCount")
+                }
+                else -> {
+                    countQueryBuilder.append(" AND tag.id IN :tagIds")
+                }
+            }
+        }
+        
+        val countQuery = entityManager.createQuery(countQueryBuilder.toString(), Long::class.java)
+        params.forEach { (key, value) -> countQuery.setParameter(key, value) }
+        
+        val totalCount = if (filters.tagMode == "all" && !filters.tagIds.isNullOrEmpty()) {
+            // For "all" mode with GROUP BY, we need to count the groups
+            val countResults = countQuery.resultList
+            countResults.size.toLong()
+        } else {
+            countQuery.singleResult
+        }
+        
+        // Convert entities to domain models
+        val tasks = resultList.map { entity ->
+            Task(
+                id = entity.id!!,
+                name = entity.name,
+                description = entity.description,
+                status = entity.status,
+                difficulty = entity.difficulty.name,
+                context = entity.context?.let {
+                    TaskContext(
+                        name = it.name,
+                        type = it.type.name,
+                    )
+                },
+                projectName = entity.project?.name,
+                dueDate = entity.dueDate,
+                timeContext = entity.timeContext,
+                url = entity.url,
+                sourceUrl = entity.sourceUrl,
+                createdAt = entity.creationDate
+            )
+        }
+        
+        return PageImpl(tasks, pageable, totalCount)
     }
 }

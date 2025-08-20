@@ -2,6 +2,7 @@ package com.iliesbel.yapbackend.domain.tasks.persistence
 
 import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextEntity
+import com.iliesbel.yapbackend.domain.tags.persistence.TagEntity
 import com.iliesbel.yapbackend.domain.tasks.service.model.Difficulty
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
 import jakarta.persistence.*
@@ -42,5 +43,13 @@ class TaskEntity(
     var sourceUrl: String?,
     
     var sourceType: String?,
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "task_tags",
+        joinColumns = [JoinColumn(name = "task_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    val tags: MutableSet<TagEntity> = mutableSetOf()
 )
 

@@ -39,5 +39,7 @@ data class TaskPageFilter(
     val page: Int = 0,
     val size: Int = 20,
     val contextId: Long?,
-    val timeContext: DayPeriod?
+    val timeContext: DayPeriod?,
+    val tagIds: List<Long>? = null,
+    val tagMode: String? = "any" // "any" or "all"
 )
