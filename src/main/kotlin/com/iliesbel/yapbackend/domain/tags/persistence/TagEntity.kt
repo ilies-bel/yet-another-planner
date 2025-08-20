@@ -6,7 +6,7 @@ import jakarta.persistence.*
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "tags")
+@Table(name = "tag")
 class TagEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

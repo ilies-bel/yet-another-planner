@@ -46,7 +46,7 @@ class TaskEntity(
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "task_tags",
+        name = "task_tag",
         joinColumns = [JoinColumn(name = "task_id")],
         inverseJoinColumns = [JoinColumn(name = "tag_id")]
     )
