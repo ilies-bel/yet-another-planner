@@ -4,6 +4,7 @@ import com.iliesbel.jooq.generated.tables.references.CONTEXT
 import com.iliesbel.jooq.generated.tables.references.PROJECT
 import com.iliesbel.jooq.generated.tables.references.TASK
 import com.iliesbel.yapbackend.domain.contexts.persistence.ContextJpaRepository
+import com.iliesbel.yapbackend.domain.tags.service.TagService
 import com.iliesbel.yapbackend.domain.tasks.presentation.ProjectJpaRepository
 import com.iliesbel.yapbackend.domain.tasks.presentation.TaskPageFilter
 import com.iliesbel.yapbackend.domain.tasks.service.TaskCreation
@@ -11,13 +12,13 @@ import com.iliesbel.yapbackend.domain.tasks.service.TaskUpdate
 import com.iliesbel.yapbackend.domain.tasks.service.model.Task
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskContext
 import com.iliesbel.yapbackend.domain.tasks.service.model.TaskStatus
+import jakarta.persistence.EntityManager
 import org.jooq.DSLContext
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 import java.time.LocalDateTime
-import jakarta.persistence.EntityManager
 
 
 @Repository
@@ -26,7 +27,8 @@ class TaskRepository(
     private val taskJpaRepository: TaskJpaRepository,
     private val contextRepository: ContextJpaRepository,
     private val projectJpaRepository: ProjectJpaRepository,
-    private val entityManager: EntityManager
+    private val entityManager: EntityManager,
+    private val tagService: TagService
 ) {
 
     fun findAll(filters: TaskPageFilter): Page<Task> {
@@ -62,7 +64,7 @@ class TaskRepository(
                     .or(TASK.CONTEXT_ID.isNull)
             )
         }
-        
+
         // Add time context filter: allow tasks with current time context OR no time context
         if (filters.timeContext != null) {
             whereConditions.add(
@@ -70,7 +72,7 @@ class TaskRepository(
                     .or(TASK.TIME_CONTEXT.isNull)
             )
         }
-        
+
         // Add tag filtering - for now, if tag filtering is requested, fall back to JPA approach
         if (!filters.tagIds.isNullOrEmpty()) {
             return findAllWithTagsJPA(filters)
@@ -94,15 +96,30 @@ class TaskRepository(
 
         val totalCount = countQuery.fetchOne(0, Long::class.java) ?: 0L
 
-        // Apply pagination
+        // Apply sorting by status sequence in descending order (higher sequence first)
+        // This puts IN_PROGRESS at the top, followed by TODO, etc.
+        val statusCase = org.jooq.impl.DSL
+            .`when`(TASK.STATUS.eq("IN_PROGRESS"), TaskStatus.IN_PROGRESS.sequence)
+            .`when`(TASK.STATUS.eq("TODO"), TaskStatus.TODO.sequence)
+            .`when`(TASK.STATUS.eq("SOMEDAY"), TaskStatus.SOMEDAY.sequence)
+            .`when`(TASK.STATUS.eq("TO_REFINE"), TaskStatus.TO_REFINE.sequence)
+            .`when`(TASK.STATUS.eq("CAPTURED"), TaskStatus.CAPTURED.sequence)
+            .`when`(TASK.STATUS.eq("DONE"), TaskStatus.DONE.sequence)
+            .otherwise(0)
+
         val result = selectQuery
+            .orderBy(
+                statusCase.desc(),  // Higher sequence (IN_PROGRESS) comes first
+                TASK.ID.desc()      // Secondary sort by ID descending (newest first)
+            )
             .limit(filters.size)
             .offset(filters.page * filters.size)
             .fetch()
             .map { record ->
-
+                val taskId = record.get(TASK.ID)!!
+                val taskEntity = taskJpaRepository.findById(taskId).orElse(null)
                 Task(
-                    id = record.get(TASK.ID)!!,
+                    id = taskId,
                     name = record.get(TASK.NAME)!!,
                     description = record.get(TASK.DESCRIPTION),
                     status = TaskStatus.valueOf(record.get(TASK.STATUS)!!),
@@ -115,7 +132,8 @@ class TaskRepository(
                     },
                     dueDate = record.get(TASK.DUE_DATE),
                     projectName = record.get(PROJECT.NAME),
-                    timeContext = null // Will be populated from TaskEntity when we migrate to JPA-only queries
+                    timeContext = taskEntity?.timeContext,
+                    tags = taskEntity?.tags?.map { tagService.toTag(it) } ?: emptyList()
                 )
             }
 
@@ -190,10 +208,11 @@ class TaskRepository(
             },
             projectName = savedTask.project?.name,
             dueDate = savedTask.dueDate,
-            timeContext = savedTask.timeContext
+            timeContext = savedTask.timeContext,
+            tags = savedTask.tags.map { tagService.toTag(it) }
         )
     }
-    
+
     fun findBySourceUrl(sourceUrl: String): Task? {
         return taskJpaRepository.findBySourceUrl(sourceUrl)?.let { entity ->
             Task(
@@ -213,11 +232,12 @@ class TaskRepository(
                 timeContext = entity.timeContext,
                 url = entity.url,
                 sourceUrl = entity.sourceUrl,
-                createdAt = entity.creationDate
+                createdAt = entity.creationDate,
+                tags = entity.tags.map { tagService.toTag(it) }
             )
         }
     }
-    
+
     fun findBySourceTypeAndUserEmail(sourceType: String, userEmail: String): List<Task> {
         // For now, return all tasks of this source type
         // TODO: Add user filtering when TaskEntity has user relationship
@@ -239,46 +259,47 @@ class TaskRepository(
                 timeContext = entity.timeContext,
                 url = entity.url,
                 sourceUrl = entity.sourceUrl,
-                createdAt = entity.creationDate
+                createdAt = entity.creationDate,
+                tags = entity.tags.map { tagService.toTag(it) }
             )
         }
     }
-    
+
     private fun findAllWithTagsJPA(filters: TaskPageFilter): Page<Task> {
         val pageable = PageRequest.of(filters.page, filters.size)
-        
+
         // Build JPA query with tag filtering
         val queryBuilder = StringBuilder()
         queryBuilder.append("SELECT DISTINCT t FROM TaskEntity t")
-        
+
         if (!filters.tagIds.isNullOrEmpty()) {
             queryBuilder.append(" LEFT JOIN t.tags tag")
         }
-        
+
         queryBuilder.append(" LEFT JOIN t.context c")
         queryBuilder.append(" LEFT JOIN t.project p")
         queryBuilder.append(" WHERE 1=1")
-        
+
         val params = mutableMapOf<String, Any>()
-        
+
         // Status filter
         if (filters.status != null) {
             queryBuilder.append(" AND t.status IN :statuses")
             params["statuses"] = filters.status
         }
-        
+
         // Context filter
         if (filters.contextId != null) {
             queryBuilder.append(" AND (t.context.id = :contextId OR t.context.id IS NULL)")
             params["contextId"] = filters.contextId
         }
-        
+
         // Time context filter
         if (filters.timeContext != null) {
             queryBuilder.append(" AND (t.timeContext = :timeContext OR t.timeContext IS NULL)")
             params["timeContext"] = filters.timeContext
         }
-        
+
         // Tag filter
         if (!filters.tagIds.isNullOrEmpty()) {
             when (filters.tagMode) {
@@ -290,6 +311,7 @@ class TaskRepository(
                     params["tagIds"] = filters.tagIds
                     params["tagCount"] = filters.tagIds.size.toLong()
                 }
+
                 else -> {
                     // Task must have ANY of the specified tags (default)
                     queryBuilder.append(" AND tag.id IN :tagIds")
@@ -297,29 +319,44 @@ class TaskRepository(
                 }
             }
         }
-        
+
+        // Add ORDER BY clause if not using GROUP BY
+        if (!(!filters.tagIds.isNullOrEmpty() && filters.tagMode == "all")) {
+            queryBuilder.append(" ORDER BY ")
+            queryBuilder.append("CASE t.status ")
+            // Order by sequence in descending order (higher sequence first)
+            queryBuilder.append("WHEN 'IN_PROGRESS' THEN ${TaskStatus.IN_PROGRESS.sequence} ")
+            queryBuilder.append("WHEN 'TODO' THEN ${TaskStatus.TODO.sequence} ")
+            queryBuilder.append("WHEN 'SOMEDAY' THEN ${TaskStatus.SOMEDAY.sequence} ")
+            queryBuilder.append("WHEN 'TO_REFINE' THEN ${TaskStatus.TO_REFINE.sequence} ")
+            queryBuilder.append("WHEN 'CAPTURED' THEN ${TaskStatus.CAPTURED.sequence} ")
+            queryBuilder.append("WHEN 'DONE' THEN ${TaskStatus.DONE.sequence} ")
+            queryBuilder.append("ELSE 0 END DESC, ")  // DESC to put higher sequences first
+            queryBuilder.append("t.id DESC")
+        }
+
         // Create query
         val query = entityManager.createQuery(queryBuilder.toString(), TaskEntity::class.java)
         params.forEach { (key, value) -> query.setParameter(key, value) }
-        
+
         // Apply pagination
         query.firstResult = filters.page * filters.size
         query.maxResults = filters.size
-        
+
         val resultList = query.resultList
-        
+
         // Create count query for pagination
         val countQueryBuilder = StringBuilder()
         countQueryBuilder.append("SELECT COUNT(DISTINCT t.id) FROM TaskEntity t")
-        
+
         if (!filters.tagIds.isNullOrEmpty()) {
             countQueryBuilder.append(" LEFT JOIN t.tags tag")
         }
-        
+
         countQueryBuilder.append(" LEFT JOIN t.context c")
         countQueryBuilder.append(" LEFT JOIN t.project p")
         countQueryBuilder.append(" WHERE 1=1")
-        
+
         // Apply same filters to count query
         if (filters.status != null) {
             countQueryBuilder.append(" AND t.status IN :statuses")
@@ -337,15 +374,16 @@ class TaskRepository(
                     countQueryBuilder.append(" GROUP BY t.id")
                     countQueryBuilder.append(" HAVING COUNT(DISTINCT tag.id) = :tagCount")
                 }
+
                 else -> {
                     countQueryBuilder.append(" AND tag.id IN :tagIds")
                 }
             }
         }
-        
+
         val countQuery = entityManager.createQuery(countQueryBuilder.toString(), Long::class.java)
         params.forEach { (key, value) -> countQuery.setParameter(key, value) }
-        
+
         val totalCount = if (filters.tagMode == "all" && !filters.tagIds.isNullOrEmpty()) {
             // For "all" mode with GROUP BY, we need to count the groups
             val countResults = countQuery.resultList
@@ -353,7 +391,7 @@ class TaskRepository(
         } else {
             countQuery.singleResult
         }
-        
+
         // Convert entities to domain models
         val tasks = resultList.map { entity ->
             Task(
@@ -373,10 +411,11 @@ class TaskRepository(
                 timeContext = entity.timeContext,
                 url = entity.url,
                 sourceUrl = entity.sourceUrl,
-                createdAt = entity.creationDate
+                createdAt = entity.creationDate,
+                tags = entity.tags.map { tagService.toTag(it) }
             )
         }
-        
+
         return PageImpl(tasks, pageable, totalCount)
     }
 }

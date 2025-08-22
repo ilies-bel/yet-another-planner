@@ -1,6 +1,7 @@
 package com.iliesbel.yapbackend.domain.tasks.service.model
 
 import com.iliesbel.yapbackend.domain.contexts.domain.DayPeriod
+import com.iliesbel.yapbackend.domain.tags.domain.Tag
 import java.time.LocalDateTime
 
 data class Task(
@@ -15,6 +16,7 @@ data class Task(
     val timeContext: DayPeriod?,
     val url: String? = null,
     val sourceUrl: String? = null,
-    val createdAt: LocalDateTime? = null
+    val createdAt: LocalDateTime? = null,
+    val tags: List<Tag> = emptyList()
 )
 
